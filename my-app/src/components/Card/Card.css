@@ -1,12 +1,25 @@
-.Card{
+.Card {
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    padding: 20px;
+    padding-top: 10px; /* Add padding for spacing */
+    width: 10vw;
+    height:10vh; /* Increase height for better layout */
     border-radius: 10px;
-    box-sizing: border-box;
     box-shadow: 2px 2px 2px 1px rgb(0 0 0 / 20%);
-
+    color: whitesmoke;
+    gap: 5px; /* Add space between title and content */
 }
 
 
 
+.Card h3{
+    font-size: 14px;
+    margin: 0;
+}
+
+
+.Card p{
+    font-size: 12px;
+    margin: 0;
+}

@@ -3,12 +3,12 @@ import "./Card.css"
 import {AnimateSharedLayout, motion} from 'framer-motion'
 
 
-const Card = (props)=>{
-
+const Card = ({title, content,colour})=>{ //props
     const [expanded, setExpanded] = useState(false);
     return(
-        <div className="Card">
-            Card
+        <div className="Card" style={{backgroundColor:colour}}>
+            <h3>{title}</h3>
+            <p>{content}</p>
         </div>
 )}
 

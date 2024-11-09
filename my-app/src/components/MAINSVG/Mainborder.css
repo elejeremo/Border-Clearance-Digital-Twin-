@@ -1,7 +1,6 @@
-svg{
-    display: flex;
+.MainBorder{
+    direction: flex;
     justify-content: center;
-    padding: 10px;
 }
 
 #First_lane:hover{

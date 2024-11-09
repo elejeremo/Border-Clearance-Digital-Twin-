@@ -7,9 +7,9 @@ export const SidebarData =[
 ]
 
 export const CardsData = [
-    { title: "Card 1", content: "Content for card 1" },
-    { title: "Card 2", content: "Content for card 2" },
-    { title: "Card 3", content: "Content for card 3" },
-    { title: "Card 3", content: "Content for card 3" },
+    { title: "Number of urgent/month", content: "12", colour:"#7a5195" },
+    { title: "Number of Green/month", content: "Content for card 2",colour:"#003f5c" },
+    { title: "Card 3", content: "Content for card 3",colour:"#ef5675" },
+    { title: "Card 4", content: "Content for card 4",colour:"#ffa600" },
 ];
 

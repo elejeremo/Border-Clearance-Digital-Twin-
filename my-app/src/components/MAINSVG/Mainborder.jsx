@@ -47,8 +47,8 @@ const MainBorder = () => {
       </button>
       <motion.svg
           ref={svgRef}
-          width="800"
-          height="400"
+          width="900"
+          height="500"
           viewBox={viewBox}
           onClick={handleSvgClick}
           style={{ cursor: "pointer" }}
@@ -58,10 +58,7 @@ const MainBorder = () => {
           <MySvg />
       </motion.svg>
 
-        <div className="info-card" >
-          <h3>{selectedRegion}</h3>
-          <p>Details about the selected region.</p>
-        </div>
+
   
     </motion.div>
   );

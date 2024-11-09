@@ -13,7 +13,7 @@ const Cards= (props) => {
                         key={index} 
                         title={card.title} 
                         content={card.content} 
-                        
+                        colour = {card.colour}
                     />
 
                     )
