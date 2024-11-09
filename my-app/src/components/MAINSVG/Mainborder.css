@@ -1,0 +1,20 @@
+svg{
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+}
+
+#First_lane:hover{
+
+    stroke: red;
+
+}
+
+.info-card{
+    border-radius: 5px;
+    display: flex;
+    background-color: bisque;
+    position: absolute;
+
+}
+
