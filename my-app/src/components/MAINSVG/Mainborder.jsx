@@ -1,67 +1,50 @@
 import React, { useState, useRef} from "react";
 import "./Mainborder.css"
-import {ReactComponent as MySvg} from "../../svgs/BORDER-03.svg"
-import { ReactSVGPanZoom } from 'react-svg-pan-zoom'; 
 import{motion} from 'framer-motion'
+import { Canvas } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
+import modelurl from './gltf/Gate model 1.gltf'
+import {OrbitControls} from '@react-three/drei';
 
-const MainBorder = () => {
-  const initialViewBox = "0 0 3000 2000";
-  const [viewBox, setViewBox] = useState(initialViewBox);
-  const [selectedRegion, setSelectedRegion] = useState(null); // Track clicked region
-  const [showCard, setShowCard] = useState(false); // Track card visibility
-  const [cardPosition, setCardPosition] = useState({ x: 0, y: 0 });
-  const svgRef = useRef(null);
-
-  const handleSvgClick = (event) => {
-    const svg = svgRef.current;
-    const boundingRect = svg.getBoundingClientRect();
-    const xClick = event.clientX - boundingRect.left;
-    const yClick = event.clientY - boundingRect.top;
-
-    // Set zoom logic
-    const zoomScale = 8;
-    const newWidth = 2000 + (zoomScale / 10) * xClick;
-    const newHeight = 1500 + (zoomScale / 10) * yClick;
-    const newX = xClick - (zoomScale / 10) * xClick;
-    const newY = yClick;
-
-    setViewBox(`${newX} ${newY} ${newWidth} ${newHeight}`);
-
-    // Track selected region and set card visibility/position
-    setSelectedRegion("Region Name"); // Customize based on actual regions
-    //setCardPosition({ x: xClick+200, y: yClick+200 });
-    setShowCard(true);
-  };    
-
-  const resetViewBox = () => {
-    setViewBox(initialViewBox);
-    setShowCard(false); // Hide card on reset
-  };
-
+const Model = ({ url, scale, position, rotation }) => {
+  const { scene } = useGLTF(modelurl);
   
 
   return (
-    <motion.div className="MainBorder">
-      <button onClick={resetViewBox} style={{ marginBottom: "10px" }}>
-        Reset View
-      </button>
-      <motion.svg
-          ref={svgRef}
-          width="900"
-          height="500"
-          viewBox={viewBox}
-          onClick={handleSvgClick}
-          style={{ cursor: "pointer" }}
-          animate={{ viewBox }}
-          transition={{ duration: 1 }}
-        >
-          <MySvg />
-      </motion.svg>
-
-
-  
-    </motion.div>
+    <group>
+      <primitive
+        object={scene}
+        scale={scale}
+        position={position}
+        rotation={rotation}
+      />
+    </group>
   );
 };
 
-export default MainBorder;
+const ThreeModel = () => {
+  return (
+    <div className="MainBorder">
+      <Canvas 
+      
+    
+      camera={{
+          position: [10, 10, 10]
+        }}>
+      <directionalLight position={[10, 10, 5]} intensity={3} />
+      <directionalLight position={[-10, -10, -5]} intensity={2} />
+        <pointLight position={[10, 10, 10]} intensity={10}/>
+        <Model
+          url=""
+          scale={0.004}
+          position={[0,0,0]}
+          rotation={[Math.PI / 7, -Math.PI / 10, 0]}
+          
+        />
+        <OrbitControls enableZoom={false} />
+      </Canvas>
+    </div>
+  );
+};
+
+export default ThreeModel;
