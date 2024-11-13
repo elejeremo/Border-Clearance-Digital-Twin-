@@ -20,3 +20,20 @@
 
 }
 
+.annotation {
+
+
+    display: flex;
+    margin:20px;
+    position: 'absolute';
+    
+}
+
+
+.stats{
+
+
+    display: flex;
+
+    border-radius: 10px;
+}
