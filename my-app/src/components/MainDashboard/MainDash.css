@@ -1,9 +1,17 @@
 .MainDash{
     padding: 40px;
     display: flex;
+    align-items: center;
+    justify-content: center;
     flex-direction: column;
     flex-wrap: wrap;
     
+}
+
+.BorderViewbox {
+    display: flex;
+    width: 100vw;
+
 }
 
 
