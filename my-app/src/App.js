@@ -5,9 +5,7 @@ function App() {
   return (
     <div className="App">
         <div className ="AppGlass">
-          <Sidebar/>
           <MainDash/>
-          <div></div>
         </div>
     </div>
   );
