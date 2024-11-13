@@ -1,5 +1,6 @@
 .Cards {
     display: flex;
-    justify-content: center;
-    gap:50px
+    justify-content: right;
+    gap:50px;
+    margin-bottom:20px
 }
