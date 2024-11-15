@@ -6,10 +6,8 @@ import ThreeModel from "../MAINSVG/Mainborder";
     const MainDash = () => {
         return (
             <div className="MainDash">
-                <Cards/>
-                    <div className="BorderViewbox">
-                    <ThreeModel/>
-                    </div>
+                <div className="topbar"><Cards/></div>
+                <div className="BorderViewbox"><ThreeModel/></div>
             </div>
             
         )

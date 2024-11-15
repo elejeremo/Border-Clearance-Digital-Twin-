@@ -7,13 +7,13 @@ import Model from "../model/model";
 import { extend } from '@react-three/fiber'
 import Tooltip from '@mui/material/Tooltip'
 
-const Scene = ({ annotations, onPointClick, cameraControlRef, activePoint }) => {
+const Scene = ({ annotations, onPointClick, gates, onFirstClick, cameraControlRef, activePoint, activeGatePoint }) => {
   return (
     <>
       <PerspectiveCamera
         aspect={window.innerWidth / window.innerHeight}
         makeDefault
-        position={[5, 2, 5]}
+        position={[8, 5, 8]}
         fov={45}
       />
       <CameraControls
@@ -34,7 +34,23 @@ const Scene = ({ annotations, onPointClick, cameraControlRef, activePoint }) => 
         <Model url="" scale={0.001} position={[0, 0, 0]} />
       </mesh>
 
-      {annotations.map((annotation, index) => (
+
+      {gates.map((gate, index) => (
+        <GatePoint 
+          key={index} 
+          {...gate}
+          // if active point is any existing ppoint returns true else false
+          onClick={() => onFirstClick(gate)} 
+        />
+      ))} 
+
+
+      
+      {activeGatePoint !== null && ( //render only when there is 
+        
+        <>
+        
+        {annotations.map((annotation, index) => (
         <AnnotationPoint 
           key={index} 
           {...annotation}
@@ -42,11 +58,22 @@ const Scene = ({ annotations, onPointClick, cameraControlRef, activePoint }) => 
           onClick={() => onPointClick(annotation)} 
         />
       ))}
+      
+      </>
+    )}
+
+
+      
     </>
   );
 };
 
-const AnnotationPoint = ({ position, title, onClick, isActive }) => {
+
+
+
+
+
+const AnnotationPoint = ({ position, title, onClick, isActive, }) => {
   const [shiny, setShiny] = useState(false);
   
   return (
@@ -62,7 +89,7 @@ const AnnotationPoint = ({ position, title, onClick, isActive }) => {
         <meshBasicMaterial color={shiny ? 0xff00ff : 0x880088} depthTest={false} />
       </mesh>
 
-      {isActive && (
+      {isActive && ( //renders html tag by knowing which isA
         <Html position={position}>
           <div className="stats">
             <h2>{title}</h2>
@@ -74,9 +101,40 @@ const AnnotationPoint = ({ position, title, onClick, isActive }) => {
   );
 };
 
+
+const GatePoint = ({ gatePosition, gateTitle, onClick, isActiveGate }) => {
+  const [GateShiny, setGateShiny] = useState(false);
+  
+  return (
+    <>
+      <mesh
+        position={gatePosition}
+        onClick={onClick}
+        onPointerEnter={() => setGateShiny(true)}
+        onPointerLeave={() => setGateShiny(false)}
+        renderOrder={1}
+      >
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshBasicMaterial color={"#fcfcfc"} depthTest={false} />
+      </mesh>
+
+      {isActiveGate && (
+        <Html position={gatePosition}>
+          <div className="stats1">
+            <h2>{gateTitle}</h2>
+          </div>         
+        </Html>
+      )}
+    </>
+  );
+};
+
 const ThreeModel = () => {
   const cameraControlRef = useRef();
-  const [activePoint, setActivePoint] = useState(null);
+  const [activePoint, setActivePoint] = useState(null); //active annotaion point
+  const [activeGatePoint, setActiveGatePoint] = useState(null); //active gate point
+
+  const [zoomed,setZoomed] = useState(null)
   const [annotations] = useState([
     {
       position: [0.8, 1.15, 1.2],
@@ -98,6 +156,19 @@ const ThreeModel = () => {
     },
   ]);
 
+  const [gates] = useState([
+    {
+      gatePosition: [0.2, 0.5, 3],
+      gateTitle: "gate1",
+      cameraView: {
+        position: [3,3,5],
+        lookAt: [0,0,0],
+        zoom: 3
+      }
+    },
+    
+  ]);
+
   const handlePointClick = (annotation) => {
     const { cameraView } = annotation;
     cameraControlRef.current.moveTo(
@@ -114,16 +185,45 @@ const ThreeModel = () => {
     );
     cameraControlRef.current.zoomTo(cameraView.zoom, true);
     setActivePoint(annotation.title);
+    
   };
+
+
+
+  const handlefirstlevelzoom = (gate) => {
+    const { cameraView } = gate;
+    cameraControlRef.current.moveTo(
+      cameraView.position[0],
+      cameraView.position[1],
+      cameraView.position[2],
+      true
+    );
+    cameraControlRef.current.lookInDirectionOf(
+      cameraView.lookAt[0],
+      cameraView.lookAt[1],
+      cameraView.lookAt[2],
+      true
+    );
+    cameraControlRef.current.zoomTo(cameraView.zoom, true);
+    setActiveGatePoint(gate.title);
+    setActivePoint(null)
+  };
+
+
+
+
 
   return (
     <div className="MainBorder">
       <Canvas>
         <Scene 
           annotations={annotations}
+          gates={gates}
           onPointClick={handlePointClick}
+          onFirstClick = {handlefirstlevelzoom}
           cameraControlRef={cameraControlRef}
           activePoint={activePoint}
+          activeGatePoint = {activeGatePoint}
         />
       </Canvas>
 
@@ -135,12 +235,16 @@ const ThreeModel = () => {
           onClick={() => {
             cameraControlRef.current?.reset(true);
             setActivePoint(null);
+            setActiveGatePoint(null)
          
           }}
         >
           Reset View
         </button> </Tooltip>
       </div>
+
+
+      
     </div>
   );
 };
