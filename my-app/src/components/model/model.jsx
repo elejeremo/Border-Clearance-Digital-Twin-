@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useGLTF } from '@react-three/drei';
-import modelurl from './gltf/Gate model 1.gltf'
+import modelurl from './gltf/gate model 1.3.gltf'
 
 
 const Model = ({ url, scale, position, rotation }) => {

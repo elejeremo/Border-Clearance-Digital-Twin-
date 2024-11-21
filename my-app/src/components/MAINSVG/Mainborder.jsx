@@ -4,7 +4,6 @@ import { Canvas } from '@react-three/fiber';
 import { PerspectiveCamera, CameraControls, Html } from '@react-three/drei';
 import { DEG2RAD } from "three/src/math/MathUtils.js";
 import Model from "../model/model";
-import { extend } from '@react-three/fiber'
 import Tooltip from '@mui/material/Tooltip'
 
 const Scene = ({ annotations, onPointClick, gates, onFirstClick, cameraControlRef, activePoint, activeGatePoint }) => {
@@ -73,7 +72,7 @@ const Scene = ({ annotations, onPointClick, gates, onFirstClick, cameraControlRe
 
 
 
-const AnnotationPoint = ({ position, title, onClick, isActive, }) => {
+const AnnotationPoint = ({ position, title, onClick, isActive, color1,color2 }) => {
   const [shiny, setShiny] = useState(false);
   
   return (
@@ -86,7 +85,7 @@ const AnnotationPoint = ({ position, title, onClick, isActive, }) => {
         renderOrder={1}
       >
         <sphereGeometry args={[0.1, 16, 16]} />
-        <meshBasicMaterial color={shiny ? 0xff00ff : 0x880088} depthTest={false} />
+        <meshBasicMaterial color={shiny ? color1 : color2} depthTest={false} />
       </mesh>
 
       {isActive && ( //renders html tag by knowing which isA
@@ -115,7 +114,7 @@ const GatePoint = ({ gatePosition, gateTitle, onClick, isActiveGate }) => {
         renderOrder={1}
       >
         <sphereGeometry args={[0.1, 16, 16]} />
-        <meshBasicMaterial color={"#fcfcfc"} depthTest={false} />
+        <meshBasicMaterial color={"#FF0000"} depthTest={false} />
       </mesh>
 
       {isActiveGate && (
@@ -139,6 +138,8 @@ const ThreeModel = () => {
     {
       position: [0.8, 1.15, 1.2],
       title: "1",
+      color1: 0xff8888,
+      color2: 0xff0000,
       cameraView: {
         position: [2, 2, 0],
         lookAt: [0.8, 1.15, 1.2],
@@ -148,12 +149,15 @@ const ThreeModel = () => {
     {
       position: [-0.5, 0.7, -1.2],
       title: "2",
+      color1: 0x88ff88 ,
+      color2: 0x00ff00,
       cameraView: {
         position: [0, 1, -5],
         lookAt: [-0.5, 0.7, -1.2],
         zoom: 7
       }
     },
+    
   ]);
 
   const [gates] = useState([
