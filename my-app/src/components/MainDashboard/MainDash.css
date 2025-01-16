@@ -1,28 +1,19 @@
-.MainDash{
-    padding: 40px;
+.MainDash {
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap:10px
-    
+    gap: 10px;
 }
-
 
 .topbar {
+    
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-
-    overflow-x: hidden; /* Prevents horizontal overflow */
-    flex-wrap: wrap;
+    justify-content: flex-end; /* Align the content to the right */
+    width: 100%; /* Make the topbar take full width */
+    padding-right: 20px;
 }
-
 
 .BorderViewbox {
     display: flex;
-    width: 100vw;
-
-
+    width: 100%;
 }
-
-

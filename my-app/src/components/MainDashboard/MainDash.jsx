@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./MainDash.css"
 import Cards from "../Cards1/Cards1";
-import ThreeModel from "../MAINSVG/Mainborder";
+import ThreeModel from "../Threefibermodel/ThreeModel";
 
     const MainDash = () => {
         return (

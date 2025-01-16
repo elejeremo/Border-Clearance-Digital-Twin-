@@ -1,0 +1,15 @@
+.info-card {
+    border-radius: 5px;
+    display: flex;
+    background-color: bisque;
+    position: absolute;
+}
+
+.stats {
+    display: flex;
+    border-radius: 10px;
+}
+
+.stats1 {
+    font-size: 20px;
+}

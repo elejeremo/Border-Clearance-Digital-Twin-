@@ -1,0 +1,29 @@
+.annotation {
+    display: flex;
+    margin: 20px;
+    position: absolute;
+}
+
+.annotation-wrapper {
+    position: absolute;
+    transform: translate3d(-50%, -50%, 0);
+    pointer-events: none;
+}
+
+
+.info-widget {
+    position: absolute;
+    display: flex; /* Enable flexbox */
+    flex-direction: column; /* Stack children vertically */
+    left: 20vw;
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Center vertically */
+    width: auto; /* Let the width be based on content */
+    padding: 80px;
+    font-size: 50px;
+    border-radius: 30px;
+    border: 5px;
+    outline-width: 5px;
+    outline-color: black;
+  }
+ 
