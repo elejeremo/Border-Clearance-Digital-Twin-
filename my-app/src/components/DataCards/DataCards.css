@@ -1,0 +1,8 @@
+.data-cards{
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    justify-content: center;
+    gap: 60px;
+}
+
