@@ -1,41 +1,100 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Canvas } from '@react-three/fiber';
 import Scene from '../Scene/Scene';
 import Tooltip from '@mui/material/Tooltip';
 import { AnnotationPointData } from "../../data/data";
 import { GatePointData } from "../../data/data";
 import "./ThreeModel.css"
-import Model from "../model/model";
+import api from "../../api.js"
+
+
+
 
 const ThreeModel = () => {
   const cameraControlRef = useRef();
   const [activePoint, setActivePoint] = useState(null);
   const [activeGatePoint, setActiveGatePoint] = useState(null);
+  const [annotations, setAnnotations] = useState([]);
+  const[gates,setGates] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const debugLog = (message, data) => {
+    console.log(`[Debug] ${message}:`, data);
+  };
+  const fetchAnnotationPointData = async () => {
+    try {
+      setIsLoading(true);
+      const annotationresponse = await api.get('/api/annotationdata');
+      const gateresponse = await api.get('/api/gatedata');
+      debugLog('Raw API Response', gateresponse.data);
+      // gatePosition: item.gatePosition,
+      // gateTitle: item.gateTitle,
+      // cameraView: item.cameraView,
+      // color1:item.color1,
+      // color2:item.color2
+      const transformedGateData = gateresponse.data.gate_points.map(item => ({
+        gatePosition: item.gatePosition,
+        gateTitle: item.gateTitle,
+        gateId: item.gateId,
+        color1: item.color1,
+        color2: item.color2,
+        cameraView: item.cameraView,
+      }));
+      // Transform backend data to match frontend structure
+      const transformedAnnotationData = annotationresponse.data.annotation_points.map(item => ({
+        position: item.Rendering.position,
+        widgetposition: item.Rendering.widgetposition,
+        title: item.title,
+        gateId: item.gateId,
+        description: item.Rendering.description,
+        color1: item.Rendering.color1,
+        color2: item.Rendering.color2,
+        cameraView: item.Rendering.cameraView,
+        contentTitle: item.title,
+        content: item.content
+      }));
+      debugLog('data', transformedAnnotationData)
+      setAnnotations(transformedAnnotationData);
+      setGates(transformedGateData);
+      setError(null);
+    } catch (error) {
+      console.error("Error fetching annotation points:", error);
+      setError("Failed to load annotation data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const [annotations] = useState(
-    AnnotationPointData.map(item => ({
-      position: item.Rendering.position,
-      widgetposition: item.Rendering.widgetposition,
-      title: item.title,
-      gateId: item.gateId,
-      description: item.Rendering.description,
-      color1: item.Rendering.color1,
-      color2: item.Rendering.color2,
-      cameraView: item.Rendering.cameraView,
-      contentTitle: item.title,
-      content: item.content
-    }))
-  );
+  // Fetch data when component mounts
 
-  const [gates] = useState(
-    GatePointData.map(item => ({
-      gatePosition: item.gatePosition,
-      gateTitle: item.gateTitle,
-      cameraView: item.cameraView,
-      color1:item.color1,
-      color2:item.color2
-    }))
-  );
+  useEffect(() => {
+    fetchAnnotationPointData();
+  }, []);
+
+  // const [annotations] = useState(
+  //   AnnotationPointData.map(item => ({
+  //     position: item.Rendering.position,
+  //     widgetposition: item.Rendering.widgetposition,
+  //     title: item.title,
+  //     gateId: item.gateId,
+  //     description: item.Rendering.description,
+  //     color1: item.Rendering.color1,
+  //     color2: item.Rendering.color2,
+  //     cameraView: item.Rendering.cameraView,
+  //     contentTitle: item.title,
+  //     content: item.content
+  //   }))
+  // );
+
+  // const [gates] = useState(
+  //   GatePointData.map(item => ({
+  //     gatePosition: item.gatePosition,
+  //     gateTitle: item.gateTitle,
+  //     cameraView: item.cameraView,
+  //     color1:item.color1,
+  //     color2:item.color2
+  //   }))
+  // );
 
   const handlePointClick = (annotation) => {
     const { cameraView } = annotation;
@@ -79,6 +138,18 @@ const ThreeModel = () => {
             }}
           >
             Reset View
+          </button>
+        </Tooltip>
+        <Tooltip title="Reset">
+          <button
+            type="button"
+            onClick={() => {
+              
+                fetchAnnotationPointData();
+            
+            }}
+          >
+            Refresh Data
           </button>
         </Tooltip>
       </div>
