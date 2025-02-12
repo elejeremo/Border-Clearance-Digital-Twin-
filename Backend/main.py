@@ -3,6 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel,Field, validator
 from typing import Dict, Any, List
 import uvicorn
+from motor.motor_asyncio import AsyncIOMotorClient
+from bson import ObjectId
+
+# MongoDB connection settings
+MONGODB_URL = "mongodb://localhost:27017"
+DB_NAME = "Digitaltwin"
+GATE_COLLECTION = "gates"
+ANNOTATION_COLLECTION = "annotations"
+
 
 def get_health_colors(health_value: str):
     """
@@ -25,7 +34,10 @@ def get_health_colors(health_value: str):
 
     except (ValueError, TypeError):
         # Default colors if health value is invalid
-        return "error"
+        return "error" 
+
+
+
 
 app = FastAPI()
 
@@ -84,164 +96,164 @@ class CardPoint(BaseModel):
     colour: str
 
 # Sample data
-annotation_points = [
-    {
-        "Rendering": {
-            "position": [0.8, 1.15, 1.2],
-            "title": "Point_A",
-            "description": "Primary monitoring point",
-            "cameraView": {
-                "position": [2, 2, 0],
-                "lookAt": [0.8, 1.15, 0.3],
-                "zoom": 8
-            }
-        },
-        "title": "Scanner",
-        "gateId": "gate1",
-        "content": {
-            "Health": "20%",
-            "ScanningTime": 12,
-            "ProcessingTime": 21
-        }
-    },
-    {
-        "Rendering": {
-            "position": [-0.5, 0.7, -1.2],
-            "title": "Point_B",
-            "description": "Secondary checkpoint with environmental sensors",
-            "cameraView": {
-                "position": [0.4, 1.2, 0],
-                "lookAt": [-0.3, 0.7, -1.2],
-                "zoom": 9
-            }
-        },
-        "title": "Rear Gate 1",
-        "gateId": "gate1",
-        "content": {
-            "Health": "90%",
-            "OpeningTime": 10
-        }
-    },
-    {
-        "Rendering": {
-            "position": [0.5, 0.7, -1.2],
-            "title": "Point_C",
-            "description": "Secondary checkpoint with environmental sensors",
-            "cameraView": {
-                "position": [0.2, 1.2, 0],
-                "lookAt": [0.7, 0.7, -1.2],
-                "zoom": 8
-            }
-        },
-        "title": "Rear Gate 2",
-        "gateId": "gate1",
-        "content": {
-            "Health": "69%",
-            "OpeningTime": 10
-        }
-    },
-    {
-        "Rendering": {
-            "position": [-2.2, 1.15, 1.2],
-            "widgetposition": [0.8, 1.15, 1.2],
-            "title": "Point_D",
-            "description": "Primary monitoring point with real-time data collection",
-            "cameraView": {
-                "position": [0, 2, 0],
-                "lookAt": [-2.2, 1.15, 0.3],
-                "zoom": 8
-            }
-        },
-        "title": "Scanner",
-        "gateId": "gate2",
-        "content": {
-            "Health": "35%",
-            "ScanningTime": 34,
-            "ProcessingTime": 21,
-            "softwareload":300
-        }
-    },
-    {
-        "Rendering": {
-            "position": [-1, 0.7, 1.2],
-            "widgetposition": [0.8, 1.15, 1.2],
-            "title": "Point_E",
-            "description": "Primary monitoring point with real-time data collection",
-            "cameraView": {
-                "position": [-0.8, 2, 5],
-                "lookAt": [-0.8, 0.7, 1.2],
-                "zoom": 10
-            }
-        },
-        "title": "Front Gate 2",
-        "gateId": "gate2",
-        "content": {
-            "Health": "45%",
-            "ScanningTime": 70,
-            "ProcessingTime": 21
-        }
-    }
-]
+# annotation_points = [
+#     {
+#         "Rendering": {
+#             "position": [0.8, 1.15, 1.2],
+#             "title": "Point_A",
+#             "description": "Primary monitoring point",
+#             "cameraView": {
+#                 "position": [2, 2, 0],
+#                 "lookAt": [0.8, 1.15, 0.3],
+#                 "zoom": 8
+#             }
+#         },
+#         "title": "Scanner",
+#         "gateId": "gate1",
+#         "content": {
+#             "Health": "20%",
+#             "ScanningTime": 12,
+#             "ProcessingTime": 21
+#         }
+#     },
+#     {
+#         "Rendering": {
+#             "position": [-0.5, 0.7, -1.2],
+#             "title": "Point_B",
+#             "description": "Secondary checkpoint with environmental sensors",
+#             "cameraView": {
+#                 "position": [0.4, 1.2, 0],
+#                 "lookAt": [-0.3, 0.7, -1.2],
+#                 "zoom": 9
+#             }
+#         },
+#         "title": "Rear Gate 1",
+#         "gateId": "gate1",
+#         "content": {
+#             "Health": "90%",
+#             "OpeningTime": 10
+#         }
+#     },
+#     {
+#         "Rendering": {
+#             "position": [0.5, 0.7, -1.2],
+#             "title": "Point_C",
+#             "description": "Secondary checkpoint with environmental sensors",
+#             "cameraView": {
+#                 "position": [0.2, 1.2, 0],
+#                 "lookAt": [0.7, 0.7, -1.2],
+#                 "zoom": 8
+#             }
+#         },
+#         "title": "Rear Gate 2",
+#         "gateId": "gate1",
+#         "content": {
+#             "Health": "69%",
+#             "OpeningTime": 10
+#         }
+#     },
+#     {
+#         "Rendering": {
+#             "position": [-2.2, 1.15, 1.2],
+#             "widgetposition": [0.8, 1.15, 1.2],
+#             "title": "Point_D",
+#             "description": "Primary monitoring point with real-time data collection",
+#             "cameraView": {
+#                 "position": [0, 2, 0],
+#                 "lookAt": [-2.2, 1.15, 0.3],
+#                 "zoom": 8
+#             }
+#         },
+#         "title": "Scanner",
+#         "gateId": "gate2",
+#         "content": {
+#             "Health": "35%",
+#             "ScanningTime": 34,
+#             "ProcessingTime": 21,
+#             "softwareload":300
+#         }
+#     },
+#     {
+#         "Rendering": {
+#             "position": [-1, 0.7, 1.2],
+#             "widgetposition": [0.8, 1.15, 1.2],
+#             "title": "Point_E",
+#             "description": "Primary monitoring point with real-time data collection",
+#             "cameraView": {
+#                 "position": [-0.8, 2, 5],
+#                 "lookAt": [-0.8, 0.7, 1.2],
+#                 "zoom": 10
+#             }
+#         },
+#         "title": "Front Gate 2",
+#         "gateId": "gate2",
+#         "content": {
+#             "Health": "45%",
+#             "ScanningTime": 70,
+#             "ProcessingTime": 21
+#         }
+#     }
+# ]
 
 
-gate_points = [
-    {
-        "gatePosition": [0.2, 0.5, 3],
-        "gateTitle": "gate1",
-        "color1": 0xff8888,
-        "color2": 0xff0000,
-        "cameraView": {
-          "position": [3, 3, 5],
-          "lookAt": [0, 0, 0],
-          "zoom": 3
-        }
-      },
+# gate_points = [
+#   {
+#     "gatePosition": [0.2, 0.5, 3],
+#     "gateTitle": "gate1",
+#     "color1": 16752536,
+#     "color2": 16711680,
+#     "cameraView": {
+#       "position": [3, 3, 5],
+#       "lookAt": [0, 0, 0],
+#       "zoom": 3
+#     }
+#   },
+#   {
+#     "gatePosition": [-1.5, 0.5, 3],
+#     "gateTitle": "gate2",
+#     "color1": 16752536,
+#     "color2": 16711680,
+#     "cameraView": {
+#       "position": [1.5, 3, 5],
+#       "lookAt": [-1.5, 0, 0],
+#       "zoom": 3
+#     }
+#   },
+#   {
+#     "gatePosition": [-3, 0.5, 3],
+#     "gateTitle": "gate3",
+#     "color1": 16756454,
+#     "color2": 16756258,
+#     "cameraView": {
+#       "position": [0, 3, 5],
+#       "lookAt": [-3, 0, 0],
+#       "zoom": 3
+#     }
+#   },
+#   {
+#     "gatePosition": [1.5, 0.5, 3],
+#     "gateTitle": "gate4",
+#     "color1": 16756454,
+#     "color2": 16756258,
+#     "cameraView": {
+#       "position": [4.5, 3, 5],
+#       "lookAt": [1.5, 0, 0],
+#       "zoom": 3
+#     }
+#   },
+#   {
+#     "gatePosition": [3, 0.5, 3],
+#     "gateTitle": "gate5",
+#     "color1": 13496889,
+#     "color2": 10651156,
+#     "cameraView": {
+#       "position": [6, 3, 5],
+#       "lookAt": [3, 0, 0],
+#       "zoom": 3
+#     }
+#   }
+# ]
 
-    {
-    "gatePosition": [-1.5, 0.5, 3],
-    "gateTitle": "gate2",
-    "color1": 0xff8888,
-    "color2": 0xff0000,
-    "cameraView": {
-      "position": [1.5, 3, 5],
-      "lookAt": [-1.5, 0, 0],
-      "zoom": 3
-    }
-  },
-  {
-    "gatePosition": [-3, 0.5, 3],
-    "gateTitle": "gate3",
-    "color1": 0xFFD066,
-    "color2": 0xFFBB22,
-    "cameraView": {
-      "position": [0, 3, 5],
-      "lookAt": [-3, 0, 0],
-      "zoom": 3
-    }
-  },
-  {
-    "gatePosition": [1.5, 0.5, 3],
-    "gateTitle": "gate4",
-    "color1": 0xFFD066,
-    "color2": 0xFFBB22,
-    "cameraView": {
-      "position": [4.5, 3, 5],
-      "lookAt": [1.5, 0, 0],
-      "zoom": 3
-    }
-  },
-  {
-    "gatePosition": [3, 0.5, 3],
-    "gateTitle": "gate5",
-    "color1": 0xCDD839,
-    "color2": 0xA2AD14,
-    "cameraView": {
-      "position": [6, 3, 5],
-      "lookAt": [3, 0, 0],
-      "zoom": 3
-    }
-  }
-]
 
 test_data = [
         { 
@@ -263,31 +275,85 @@ test_data = [
 
 
 
+
 @app.get("/api/annotationdata")
-async def get_annotation_data():  # Changed function name to be unique
+async def get_annotation_data():
     try:
-        validated_points = [AnnotationPoint(**point) for point in annotation_points]
-        return {"annotation_points": [point.model_dump() for point in validated_points]}  # Changed key to match frontend
+        # Fetch data from MongoDB
+        annotation_points_data = await app.mongodb[ANNOTATION_COLLECTION].find().to_list(1000)
+        
+        # Convert ObjectId to string and validate through Pydantic model
+        validated_points = [
+            AnnotationPoint(**{
+                **point,
+                "_id": str(point["_id"])
+            }) 
+            for point in annotation_points_data
+        ]
+        
+        return {"annotation_points": [point.model_dump() for point in validated_points]}
     except Exception as e:
-        print(f"Error in annotation data: {str(e)}")  # Added debug print
+        print(f"Error in annotation data: {str(e)}")
         return {"error": str(e)}
+
+
+    
 
 
 #GET gate data
+# @app.get("/api/gatedata")
+# async def get_all_data():
+#     try:
+#         # Validate data using the Point model instead of Gates
+#         validated_points = [GatePoint(**point) for point in gate_points]
+#         return {"gate_points": gate_points}
+#     except Exception as e:
+#         return {"error": str(e)}
+
+@app.on_event("startup")
+async def startup_db_client():
+    try:
+        print("Attempting to connect to MongoDB...")
+        app.mongodb_client = AsyncIOMotorClient(MONGODB_URL)
+        app.mongodb = app.mongodb_client[DB_NAME]
+        
+        # Test the connection
+        await app.mongodb.command("ping")
+        print("Successfully connected to MongoDB!")
+        
+        # Check collection count
+        count = await app.mongodb[GATE_COLLECTION].count_documents({})
+        print(f"Current number of documents in {GATE_COLLECTION}: {count}")
+        
+        if count == 0:
+            print("Collection empty, initializing with default data...")
+            await app.mongodb[GATE_COLLECTION].insert_many(gate_points)
+            print("Default data inserted successfully!")
+    except Exception as e:
+        print(f"Failed to connect to MongoDB: {str(e)}")
+
+@app.on_event("shutdown")
+async def shutdown_db_client():
+    app.mongodb_client.close()
+
+
 @app.get("/api/gatedata")
 async def get_all_data():
     try:
-        # Validate data using the Point model instead of Gates
-        validated_points = [GatePoint(**point) for point in gate_points]
-        return {"gate_points": gate_points}
+        # Fetch data from MongoDB
+      
+        print("Attempting to fetch gate data from MongoDB...")
+        gate_points_data = await app.mongodb[GATE_COLLECTION].find().to_list(1000)
+        print(f"Retrieved {len(gate_points_data)} documents from MongoDB")
+        # Convert ObjectId to string for JSON serialization
+        for point in gate_points_data:
+            point["_id"] = str(point["_id"])
+        return {"gate_points": gate_points_data}
     except Exception as e:
         return {"error": str(e)}
 
-
 @app.get("/api/countdata")
 async def get_count_data():
-    
-    
     try:
         validated_points = [CardPoint(**point).dict() for point in test_data]
         print("Validated points:", validated_points)  # Debug print

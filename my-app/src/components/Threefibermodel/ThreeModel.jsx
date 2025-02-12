@@ -2,15 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import { Canvas } from '@react-three/fiber';
 import Scene from '../Scene/Scene';
 import Tooltip from '@mui/material/Tooltip';
-import { AnnotationPointData } from "../../data/data";
-import { GatePointData } from "../../data/data";
 import "./ThreeModel.css"
 import api from "../../api.js"
 
 
 
 
-const ThreeModel = () => {
+const ThreeModel = ({onGateSelect}) => {
   const cameraControlRef = useRef();
   const [activePoint, setActivePoint] = useState(null);
   const [activeGatePoint, setActiveGatePoint] = useState(null);
@@ -21,17 +19,13 @@ const ThreeModel = () => {
   const debugLog = (message, data) => {
     console.log(`[Debug] ${message}:`, data);
   };
+  
   const fetchAnnotationPointData = async () => {
     try {
       setIsLoading(true);
       const annotationresponse = await api.get('/api/annotationdata');
       const gateresponse = await api.get('/api/gatedata');
       debugLog('Raw API Response', gateresponse.data);
-      // gatePosition: item.gatePosition,
-      // gateTitle: item.gateTitle,
-      // cameraView: item.cameraView,
-      // color1:item.color1,
-      // color2:item.color2
       const transformedGateData = gateresponse.data.gate_points.map(item => ({
         gatePosition: item.gatePosition,
         gateTitle: item.gateTitle,
@@ -40,6 +34,7 @@ const ThreeModel = () => {
         color2: item.color2,
         cameraView: item.cameraView,
       }));
+      
       // Transform backend data to match frontend structure
       const transformedAnnotationData = annotationresponse.data.annotation_points.map(item => ({
         position: item.Rendering.position,
@@ -71,30 +66,6 @@ const ThreeModel = () => {
     fetchAnnotationPointData();
   }, []);
 
-  // const [annotations] = useState(
-  //   AnnotationPointData.map(item => ({
-  //     position: item.Rendering.position,
-  //     widgetposition: item.Rendering.widgetposition,
-  //     title: item.title,
-  //     gateId: item.gateId,
-  //     description: item.Rendering.description,
-  //     color1: item.Rendering.color1,
-  //     color2: item.Rendering.color2,
-  //     cameraView: item.Rendering.cameraView,
-  //     contentTitle: item.title,
-  //     content: item.content
-  //   }))
-  // );
-
-  // const [gates] = useState(
-  //   GatePointData.map(item => ({
-  //     gatePosition: item.gatePosition,
-  //     gateTitle: item.gateTitle,
-  //     cameraView: item.cameraView,
-  //     color1:item.color1,
-  //     color2:item.color2
-  //   }))
-  // );
 
   const handlePointClick = (annotation) => {
     const { cameraView } = annotation;
@@ -111,6 +82,7 @@ const ThreeModel = () => {
     cameraControlRef.current.zoomTo(cameraView.zoom, true);
     setActiveGatePoint(gate.gateTitle);
     setActivePoint(null);
+    onGateSelect(gate)
   };
 
   return (
@@ -135,6 +107,7 @@ const ThreeModel = () => {
               cameraControlRef.current?.reset(true);
               setActivePoint(null);
               setActiveGatePoint(null);
+              onGateSelect(null)
             }}
           >
             Reset View
@@ -144,9 +117,7 @@ const ThreeModel = () => {
           <button
             type="button"
             onClick={() => {
-              
                 fetchAnnotationPointData();
-            
             }}
           >
             Refresh Data

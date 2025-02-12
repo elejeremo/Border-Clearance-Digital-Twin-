@@ -1,6 +1,5 @@
 import "./DataCards.css"
 import DataCard from "../DataCard/DataCard"
-import { AnnotationPointData } from "../../data/data";
 const DataCards = ({ content }) => {
     return (
       <div className="data-cards">
