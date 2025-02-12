@@ -17,3 +17,35 @@
     display: flex;
     width: 100%;
 }
+
+
+.fixed-info-widget {
+    position: absolute;
+    top: 10vh;
+    left: 2vw;
+    z-index: 1000;
+    pointer-events: auto;
+  }
+  
+  .info-widget {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    gap: 20px;
+    width: 20%;
+  }
+  
+  .info-widget h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+  }
+
+  .info-widget h3 {
+    margin: 0;
+    font-size: 0.5rem;
+    color: #333;
+  }

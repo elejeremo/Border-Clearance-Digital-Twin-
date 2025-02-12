@@ -18,6 +18,7 @@ const AnnotationPoint = ({ position, title, onClick, isActive, color1, color2, c
         <sphereGeometry args={[0.1, 16, 16]} />
         <meshBasicMaterial color={shiny ? color1 : color2} depthTest={false} />
       </mesh>
+      
       {isActive && (
         <Html
           position={position}
@@ -27,7 +28,7 @@ const AnnotationPoint = ({ position, title, onClick, isActive, color1, color2, c
             transition: 'all 0.2s',
           }}
         >
-          <div className="info-widget">
+          <div className="annotation-widget">
             <h2>{title}</h2>
             <DataCards content={content} />
           </div>

@@ -1,9 +1,3 @@
-.annotation {
-    display: flex;
-    margin: 20px;
-    position: absolute;
-}
-
 .annotation-wrapper {
     position: absolute;
     transform: translate3d(-50%, -50%, 0);
@@ -11,7 +5,7 @@
 }
 
 
-.info-widget {
+.annotation-widget {
     position: absolute;
     display: flex; /* Enable flexbox */
     flex-direction: column; /* Stack children vertically */

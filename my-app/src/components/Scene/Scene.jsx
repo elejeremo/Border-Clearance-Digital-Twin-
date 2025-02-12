@@ -6,6 +6,7 @@ import AnnotationPoint from '../AnnotationPoint/AnnotationPoint';
 import Model from '../model/model';
 
 const Scene = ({ annotations, onPointClick, gates, onFirstClick, cameraControlRef, activePoint, activeGatePoint }) => {
+  console.log('Clicked Gate:', activeGatePoint);
   const filteredAnnotations = activeGatePoint 
     ? annotations.filter(annotation => annotation.gateId === activeGatePoint)
     : [];
@@ -35,11 +36,13 @@ const Scene = ({ annotations, onPointClick, gates, onFirstClick, cameraControlRe
       <mesh>
         <Model url="" scale={0.001} position={[0, 0, 0]} />
       </mesh>
+
       {gates.map((gate, index) => (
         <GatePoint
           key={index}
           {...gate}
-          isActiveGate={activeGatePoint?.gateTitle === gate.gateTitle}
+          //isActiveGate={activeGatePoint?.gateTitle === gate.gateTitle}
+          isActiveGate={activeGatePoint === gate.gateTitle}
           onClick={() => onFirstClick(gate)}
         />
       ))}
@@ -56,7 +59,10 @@ const Scene = ({ annotations, onPointClick, gates, onFirstClick, cameraControlRe
           ))}
         </>
       )}
+      
     </>
+
+    
   );
 };
 
