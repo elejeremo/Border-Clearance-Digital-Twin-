@@ -122,31 +122,15 @@ try:
 
                 # Check if any COM3 sensor value ≥ 2.0
                 if any(value >= 2.0 for value in sensor_values_float):
-                    warning_message = f"⚠️ WARNING: Sensor value {sensor_values_float} exceeded 2.0! \nTimestamp: {current_time}\nData collection will STOP."
-                    print("\n🚨 CRITICAL ALERT! Data collection stopped.")
-                    print(f"Timestamp: {current_time}, Readings: {sensor_values_float}")
+                    warning_message = f"⚠️ WARNING: Sensor value {sensor_values_float} exceeded 2.0!\nTimestamp: {current_time}\nChoose an option:"
+                    user_choice = pyautogui.confirm(text=warning_message, title="Critical Sensor Alert", buttons=["Resume", "Exit"])
 
-                    # Popup warning
-                    pyautogui.alert(warning_message, "Critical Sensor Alert")
-
-                    # Close COM3
-                    ser3.close()
-
-                    # Prevent Auto-Resume Until User Confirms
-                    critical_stop = True
-
-                    # Wait for user confirmation to restart
-                    while True:
-                        print("🔴 Data collection is stopped. Press Ctrl+C to restart or Ctrl+E to exit.")
-                        try:
-                            time.sleep(0.5)
-                        except KeyboardInterrupt:
-                            print("✅ Restarting data collection...")
-                            critical_stop = False  # Allow script to resume
-                            break
-                        except EOFError:
-                            print("🚪 Exiting script after critical stop...")
-                            raise KeyboardInterrupt
+                    if user_choice == "Exit":
+                        print("Terminating data collection...")
+                        exit_script = True
+                        break
+                    else:
+                        print("Resuming data collection...")
 
                 # Create a new DataFrame row
                 new_row = pd.DataFrame([{
@@ -195,9 +179,13 @@ try:
                     # Display the DataFrame (replace with a GUI if needed)
                     print(df_latest)
 
-
                     # Reset the timer
                     start_time = time.time()
+
+                # Check if 5 minutes have passed for deletion
+                if time.time() - delete_start_time >= 300:
+                    delete_oldest_entries()
+                    delete_start_time = time.time()    
 
             # Delay between readings
             time.sleep(1)
