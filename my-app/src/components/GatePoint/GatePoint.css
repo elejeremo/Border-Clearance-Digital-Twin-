@@ -45,4 +45,10 @@
   .gate-widget h3{
 
     font-size: 50px;
+    
+  }
+
+
+  .gate-point-html {
+    pointer-events: auto;
   }
