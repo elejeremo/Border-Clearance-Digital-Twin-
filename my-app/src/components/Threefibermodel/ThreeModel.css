@@ -5,3 +5,12 @@
     width: 100%
 
 }
+
+.reset-buttons {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 0;
+    padding-top: 10px;
+    gap: 10px;
+  }

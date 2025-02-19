@@ -4,6 +4,7 @@ import Scene from '../Scene/Scene';
 import Tooltip from '@mui/material/Tooltip';
 import "./ThreeModel.css"
 import api from "../../api.js"
+import Button from '@mui/material/Button';
 
 
 
@@ -99,9 +100,10 @@ const ThreeModel = ({onGateSelect}) => {
         />
       </Canvas>
 
-      <div style={{ position: 'absolute', top: '0' }}>
-        <Tooltip title="Reset">
-          <button
+      <div className="reset-buttons">
+        <Tooltip title="ResetView">
+          <Button
+            variant="contained"
             type="button"
             onClick={() => {
               cameraControlRef.current?.reset(true);
@@ -111,17 +113,18 @@ const ThreeModel = ({onGateSelect}) => {
             }}
           >
             Reset View
-          </button>
+          </Button>
         </Tooltip>
-        <Tooltip title="Reset">
-          <button
+        <Tooltip title="ResetData">
+          <Button
+          variant="outlined"
             type="button"
             onClick={() => {
                 fetchAnnotationPointData();
             }}
           >
             Refresh Data
-          </button>
+          </Button>
         </Tooltip>
       </div>
     </div>

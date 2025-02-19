@@ -1,17 +1,20 @@
 import React, { useState, useRef} from "react";
-import "./Mainborder.css"
-import {ReactComponent as MySvg} from "../../svgs/BORDER-03.svg"
-import { ReactSVGPanZoom } from 'react-svg-pan-zoom'; 
-import{motion} from 'framer-motion'
+import { LineChart } from '@mui/x-charts/LineChart';
 
+const ChartsOverviewDemo = () => {
 
-
-const DataDisplay = () => {
-
-
-
-
+    return (
+        <LineChart
+          xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+          series={[
+            {
+              data: [2, 5.5, 2, 8.5, 1.5, 5],
+            },
+          ]}
+          margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
+            height={150}
+        />
+      );
 }
 
-
-export default DataDisplay
+export default ChartsOverviewDemo
