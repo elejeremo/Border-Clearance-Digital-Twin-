@@ -36,7 +36,10 @@ CREATE TABLE IF NOT EXISTS SensorReadings (
     sensor1 REAL,
     sensor2 REAL,
     sensor3 REAL,
-    sensor4 REAL
+    sensor4 REAL,
+    sensorX1 REAL,
+    sensorX2 REAL,
+    sensorX3 REAL
 )
 """)
 conn.commit()
@@ -44,7 +47,7 @@ conn.commit()
 print(f"Data will be stored in: {db_name}")
 
 # Initialize an empty DataFrame
-df = pd.DataFrame(columns=["Timestamp", "Sensor1", "Sensor2", "Sensor3", "Sensor4"])
+df = pd.DataFrame(columns=["Timestamp", "Sensor1", "Sensor2", "Sensor3", "Sensor4", "SensorX1", "SensorX2", "SensorX3" ])
 data_count = 0  # Counter for saving every 300 entries
 start_time = time.time()  # Timer for auto-refresh
 delete_start_time = time.time()
@@ -53,6 +56,7 @@ delete_start_time = time.time()
 paused = False
 critical_stop = False  # If a critical stop occurs, prevent auto-resume
 exit_script = False    # Flag to indicate when to exit the script
+prev_sensorX1 = None
 
 def signal_handler(sig, frame):
     global paused
@@ -114,17 +118,35 @@ try:
                 sensor_values = line_com3.split(',')
 
                 # Ensure correct number of columns (prevent index errors)
-                while len(sensor_values) < 4:
+                while len(sensor_values) < 7:
                     sensor_values.append("0")  # Fill missing values with 0
 
                 # Convert sensor values to float for comparison
                 sensor_values_float = [float(x) if x.replace('.', '', 1).isdigit() else 0.0 for x in sensor_values]
 
-                # Check if any COM3 sensor value ≥ 2.0
-                if any(value >= 2.0 for value in sensor_values_float):
-                    warning_message = f"⚠️ WARNING: Sensor value {sensor_values_float} exceeded 2.0!\nTimestamp: {current_time}\nChoose an option:"
-                    user_choice = pyautogui.confirm(text=warning_message, title="Critical Sensor Alert", buttons=["Resume", "Exit"])
+                # Check if any of the first four sensor values exceed 5
+                threshold_exceeded = False
+                for i in range(4):
+                    if sensor_values_float[i] > 5:
+                        warning_message = (f"⚠️ WARNING: Sensor{i+1} value {sensor_values_float[i]} "
+                                           f"exceeded 5.0!\nTimestamp: {current_time}\nChoose an option:")
+                        threshold_exceeded = True
+                        break  # Exit loop if any sensor exceeds the threshold
 
+                # Check if the difference in SensorX1 exceeds 50
+                if not threshold_exceeded and prev_sensorX1 is not None:
+                    diff_sensorX1 = abs(sensor_values_float[4] - prev_sensorX1)
+                    if diff_sensorX1 > 50:
+                        warning_message = (f"⚠️ WARNING: SensorX1 value change {diff_sensorX1} "
+                                           f"exceeded 50.0!\nTimestamp: {current_time}\nChoose an option:")
+                        threshold_exceeded = True
+
+                # Update previous SensorX1 value
+                prev_sensorX1 = sensor_values_float[4]
+
+                # If any threshold is exceeded, prompt the user
+                if threshold_exceeded:
+                    user_choice = pyautogui.confirm(text=warning_message, title="Critical Sensor Alert", buttons=["Resume", "Exit"])
                     if user_choice == "Exit":
                         print("Terminating data collection...")
                         exit_script = True
@@ -138,7 +160,10 @@ try:
                     "Sensor1": sensor_values_float[0],
                     "Sensor2": sensor_values_float[1],
                     "Sensor3": sensor_values_float[2],
-                    "Sensor4": sensor_values_float[3]
+                    "Sensor4": sensor_values_float[3],
+                    "SensorX1": sensor_values_float[4],
+                    "SensorX2": sensor_values_float[5],
+                    "SensorX3": sensor_values_float[6]
                 }])
 
                 # Append new row to DataFrame
@@ -147,14 +172,14 @@ try:
 
                 # Insert data into SQL database
                 cursor.execute("""
-                    INSERT INTO SensorReadings (timestamp, sensor1, sensor2, sensor3, sensor4)
-                    VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO SensorReadings (timestamp, sensor1, sensor2, sensor3, sensor4, sensorX1, sensorX2, sensorX3)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """, (current_time, sensor_values_float[0], sensor_values_float[1], 
-                      sensor_values_float[2], sensor_values_float[3]))
+                      sensor_values_float[2], sensor_values_float[3], sensor_values_float[4], sensor_values_float[5], sensor_values_float[6]))
                 conn.commit()
 
                 # Print data readings
-                print(f"[{current_time}] COM3: {sensor_values_float}")
+                print(f"[{current_time}] SensorValues: {sensor_values_float}")
 
                 # Save to CSV every 300 entries
                 if data_count >= 300:
@@ -166,7 +191,7 @@ try:
                     print(f"✅ Saved last 300 readings to {csv_filename}")
 
                     # Reset DataFrame and counter
-                    df = pd.DataFrame(columns=["Timestamp", "Sensor1", "Sensor2", "Sensor3", "Sensor4"])
+                    df = pd.DataFrame(columns=["Timestamp", "Sensor1", "Sensor2", "Sensor3", "Sensor4", "SensorX1", "SensorX2", "SensorX3"])
                     data_count = 0
 
                 # Auto-refresh data view every 5 minutes
