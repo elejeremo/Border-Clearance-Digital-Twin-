@@ -20,7 +20,7 @@ timestamp_str = time.strftime("%Y-%m-%d_%H-%M-%S")
 # Get the Desktop path dynamically
 desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
 os.chdir(desktop_path)
-db_name = f"sensor_data_{timestamp_str}.db"
+db_name = f"sensor_data.db"
 db_path = os.path.join(desktop_path, db_name)  # Get absolute path
 print(f"Database is saved at: {db_path}")
 
