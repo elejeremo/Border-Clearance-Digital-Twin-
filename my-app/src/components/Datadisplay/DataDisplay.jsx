@@ -4,21 +4,64 @@ import { Gauge } from '@mui/x-charts/Gauge';
 import Stack from '@mui/material/Stack';
 
 
+
+
+
+
 const ChartsOverviewDemo = () => {
+
+
+  const [sensorData, setSensorData] = useState([]);
+  const [connected, setConnected] = useState(false);
+  const websocketRef = useRef(null);
+
+  useEffect(() => {
+    websocketRef.current = new WebSocket("ws://localhost:8000/ws");
+
+    websocketRef.current.onopen = () => {
+      console.log("Connected to WebSocket");
+      setConnected(true);
+    };
+
+    websocketRef.current.onmessage = (event) => {
+      try {
+        const newData = JSON.parse(event.data);
+        setSensorData((prevData) => [newData, ...prevData].slice(0, 10)); // Keep latest 10 readings
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+
+    websocketRef.current.onclose = () => {
+      console.log("Disconnected from WebSocket");
+      setConnected(false);
+    };
+
+    return () => {
+      if (websocketRef.current) {
+        websocketRef.current.close();
+      }
+    };
+  }, []);
+
+  
     return (
       <div>
         <LineChart
-      xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-      series={[
-        {
-          data: [2, 5.5, 2, 8.5, 1.5, 5],
-          color: '#430099'
-        },
-    
-      ]}
-      margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
-        height={150}
-    />
+  xAxis={[
+    {
+      data: sensorData.map((data) => data.timestamp) // Extract timestamps correctly
+    }
+  ]}
+  series={[
+    {
+      data: sensorData.map((data) => data.sensor1), // Extract the actual sensor values
+      color: '#430099'
+    },
+  ]}
+  margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
+  height={150}
+/>
     
     <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 1, md: 3 }}>
       <Gauge width={100} height={100} value={60} color='#430099' />
