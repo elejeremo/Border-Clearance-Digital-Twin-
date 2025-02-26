@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect} from "react";
 import { LineChart } from '@mui/x-charts/LineChart';
+import { Gauge } from "@mui/x-charts/Gauge";
+import Stack from "@mui/material/Stack";
 
 
 
