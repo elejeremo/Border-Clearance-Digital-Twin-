@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 
 
 
-const ThreeModel = ({onGateSelect}) => {
+const ThreeModel = ({onGateSelect, onAnnotationSelect}) => {
   const cameraControlRef = useRef();
   const [activePoint, setActivePoint] = useState(null);
   const [activeGatePoint, setActiveGatePoint] = useState(null);
@@ -68,12 +68,13 @@ const ThreeModel = ({onGateSelect}) => {
   }, []);
 
 
-  const handlePointClick = (annotation) => {
+  const handleSecondlevelzoom = (annotation) => {
     const { cameraView } = annotation;
     cameraControlRef.current.moveTo(cameraView.position[0], cameraView.position[1], cameraView.position[2], true);
     cameraControlRef.current.lookInDirectionOf(cameraView.lookAt[0], cameraView.lookAt[1], cameraView.lookAt[2], true);
     cameraControlRef.current.zoomTo(cameraView.zoom, true);
     setActivePoint(annotation.title);
+    onAnnotationSelect(annotation)
   };
 
   const handlefirstlevelzoom = (gate) => {
@@ -84,6 +85,7 @@ const ThreeModel = ({onGateSelect}) => {
     setActiveGatePoint(gate.gateTitle);
     setActivePoint(null);
     onGateSelect(gate)
+    onAnnotationSelect(null)
   };
 
   return (
@@ -92,7 +94,7 @@ const ThreeModel = ({onGateSelect}) => {
         <Scene 
           annotations={annotations}
           gates={gates}
-          onPointClick={handlePointClick}
+          onPointClick={handleSecondlevelzoom}
           onFirstClick={handlefirstlevelzoom}
           cameraControlRef={cameraControlRef}
           activePoint={activePoint}
@@ -110,6 +112,7 @@ const ThreeModel = ({onGateSelect}) => {
               setActivePoint(null);
               setActiveGatePoint(null);
               onGateSelect(null)
+              onAnnotationSelect(null)
             }}
           >
             Reset View

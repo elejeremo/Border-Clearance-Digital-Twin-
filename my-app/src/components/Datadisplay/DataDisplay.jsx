@@ -7,8 +7,6 @@ import Stack from "@mui/material/Stack";
 
 
 const ChartsOverviewDemo = () => {
-
-
   const [sensorData, setSensorData] = useState([]);
   const [connected, setConnected] = useState(false);
   const websocketRef = useRef(null);
@@ -30,40 +28,87 @@ const ChartsOverviewDemo = () => {
       }
     };
 
-    websocketRef.current.onclose = () => {
-      console.log("Disconnected from WebSocket");
-      setConnected(false);
-    };
-
-    return () => {
-      if (websocketRef.current) {
-        websocketRef.current.close();
-      }
-    };
+  
   }, []);
 
   
   return (
     <div>
-      <LineChart
-        xAxis={[
-          {
-            data: sensorData.map((data) => data.timestamp), // Extract timestamps correctly
-          },
-        ]}
-        series={[
-          {
-            data: sensorData.map((data) => data.sensor1), // Extract the actual sensor values
-            color: "#430099",
-          },
-        ]}
-        margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
-        height={150}
-      />
+     <LineChart
+  xAxis={[
+    {
+      data: Array.from({ length: sensorData.length }, (_, index) => index + 1), // Create an array of numbers from 1 to N
+    },
+  ]}
+  yAxis={[
+    {
+      min: 0,
+      max: 2,
+    },
+  ]}
+  series={[
+    {
+      data: sensorData.map((data) => data.sensor1),
+      color: "rgb(255, 0, 0)",  // Red
+    },
+    {
+      data: sensorData.map((data) => data.sensor2),
+      color: "rgb(255, 255, 0)",  // Yellow
+    },
+    {
+      data: sensorData.map((data) => data.sensor3),
+      color: "rgb(173, 53, 53)",  // Green
+    },
+    {
+      data: sensorData.map((data) => data.sensor4),
+      color: "rgb(35, 137, 35)",  // Green
+    }
+    
+  ]}
+  margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
+  height={150}
+/>
+
+
   
       <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 3 }}>
         <Gauge width={100} height={100} value={60} color="#430099" />
         <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />
+        <div className="sensor-container">
+      <h1>Live Sensor Data</h1>
+      <div className="connection-status">
+        <span className={`status-indicator ${connected ? "connected" : "disconnected"}`}></span>
+        <span>{connected ? "Connected" : "Disconnected"}</span>
+      </div>
+      <table className="sensor-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Sensor 1</th>
+            <th>Sensor 2</th>
+            <th>Sensor 3</th>
+            <th>Sensor 4</th>
+            <th>Sensor X1</th>
+            <th>Sensor X2</th>
+            <th>Sensor X3</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sensorData.map((data, index) => (
+            <tr key={index}>
+              <td>{data.timestamp}</td>
+              <td>{data.sensor1}</td>
+              <td>{data.sensor2}</td>
+              <td>{data.sensor3}</td>
+              <td>{data.sensor4}</td>
+              <td>{data.sensorX1}</td>
+              <td>{data.sensorX2}</td>
+              <td>{data.sensorX3}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
       </Stack>
     </div>
   );
