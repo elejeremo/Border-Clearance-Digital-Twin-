@@ -91,7 +91,7 @@ class ConnectionManager:
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
 
-    async def broadcast(self, message: str):
+    async def broadcast(self, message: str): #broadcasts to the client connections (shows up on the react client side)
         for connection in self.active_connections:
             try:
                 await connection.send_text(message)
@@ -448,6 +448,10 @@ async def shutdown_event():
     print("Database connection closed.")
 
 
+
+
+
+
 # Pydantic models
 class CameraView(BaseModel):
     position: List[float]
@@ -494,164 +498,6 @@ class CardPoint(BaseModel):
     content: int
     colour: str
 
-# Sample data
-# annotation_points = [
-#     {
-#         "Rendering": {
-#             "position": [0.8, 1.15, 1.2],
-#             "title": "Point_A",
-#             "description": "Primary monitoring point",
-#             "cameraView": {
-#                 "position": [2, 2, 0],
-#                 "lookAt": [0.8, 1.15, 0.3],
-#                 "zoom": 8
-#             }
-#         },
-#         "title": "Scanner",
-#         "gateId": "gate1",
-#         "content": {
-#             "Health": "20%",
-#             "ScanningTime": 12,
-#             "ProcessingTime": 21
-#         }
-#     },
-#     {
-#         "Rendering": {
-#             "position": [-0.5, 0.7, -1.2],
-#             "title": "Point_B",
-#             "description": "Secondary checkpoint with environmental sensors",
-#             "cameraView": {
-#                 "position": [0.4, 1.2, 0],
-#                 "lookAt": [-0.3, 0.7, -1.2],
-#                 "zoom": 9
-#             }
-#         },
-#         "title": "Rear Gate 1",
-#         "gateId": "gate1",
-#         "content": {
-#             "Health": "90%",
-#             "OpeningTime": 10
-#         }
-#     },
-#     {
-#         "Rendering": {
-#             "position": [0.5, 0.7, -1.2],
-#             "title": "Point_C",
-#             "description": "Secondary checkpoint with environmental sensors",
-#             "cameraView": {
-#                 "position": [0.2, 1.2, 0],
-#                 "lookAt": [0.7, 0.7, -1.2],
-#                 "zoom": 8
-#             }
-#         },
-#         "title": "Rear Gate 2",
-#         "gateId": "gate1",
-#         "content": {
-#             "Health": "69%",
-#             "OpeningTime": 10
-#         }
-#     },
-#     {
-#         "Rendering": {
-#             "position": [-2.2, 1.15, 1.2],
-#             "widgetposition": [0.8, 1.15, 1.2],
-#             "title": "Point_D",
-#             "description": "Primary monitoring point with real-time data collection",
-#             "cameraView": {
-#                 "position": [0, 2, 0],
-#                 "lookAt": [-2.2, 1.15, 0.3],
-#                 "zoom": 8
-#             }
-#         },
-#         "title": "Scanner",
-#         "gateId": "gate2",
-#         "content": {
-#             "Health": "35%",
-#             "ScanningTime": 34,
-#             "ProcessingTime": 21,
-#             "softwareload":300
-#         }
-#     },
-#     {
-#         "Rendering": {
-#             "position": [-1, 0.7, 1.2],
-#             "widgetposition": [0.8, 1.15, 1.2],
-#             "title": "Point_E",
-#             "description": "Primary monitoring point with real-time data collection",
-#             "cameraView": {
-#                 "position": [-0.8, 2, 5],
-#                 "lookAt": [-0.8, 0.7, 1.2],
-#                 "zoom": 10
-#             }
-#         },
-#         "title": "Front Gate 2",
-#         "gateId": "gate2",
-#         "content": {
-#             "Health": "45%",
-#             "ScanningTime": 70,
-#             "ProcessingTime": 21
-#         }
-#     }
-# ]
-
-
-# gate_points = [
-#   {
-#     "gatePosition": [0.2, 0.5, 3],
-#     "gateTitle": "gate1",
-#     "color1": 16752536,
-#     "color2": 16711680,
-#     "cameraView": {
-#       "position": [3, 3, 5],
-#       "lookAt": [0, 0, 0],
-#       "zoom": 3
-#     }
-#   },
-#   {
-#     "gatePosition": [-1.5, 0.5, 3],
-#     "gateTitle": "gate2",
-#     "color1": 16752536,
-#     "color2": 16711680,
-#     "cameraView": {
-#       "position": [1.5, 3, 5],
-#       "lookAt": [-1.5, 0, 0],
-#       "zoom": 3
-#     }
-#   },
-#   {
-#     "gatePosition": [-3, 0.5, 3],
-#     "gateTitle": "gate3",
-#     "color1": 16756454,
-#     "color2": 16756258,
-#     "cameraView": {
-#       "position": [0, 3, 5],
-#       "lookAt": [-3, 0, 0],
-#       "zoom": 3
-#     }
-#   },
-#   {
-#     "gatePosition": [1.5, 0.5, 3],
-#     "gateTitle": "gate4",
-#     "color1": 16756454,
-#     "color2": 16756258,
-#     "cameraView": {
-#       "position": [4.5, 3, 5],
-#       "lookAt": [1.5, 0, 0],
-#       "zoom": 3
-#     }
-#   },
-#   {
-#     "gatePosition": [3, 0.5, 3],
-#     "gateTitle": "gate5",
-#     "color1": 13496889,
-#     "color2": 10651156,
-#     "cameraView": {
-#       "position": [6, 3, 5],
-#       "lookAt": [3, 0, 0],
-#       "zoom": 3
-#     }
-#   }
-# ]
 
 
 test_data = [
