@@ -159,6 +159,7 @@ paused = False
 critical_stop = False  # If a critical stop occurs, prevent auto-resume
 exit_script = False  # Flag to indicate when to exit the script
 prev_sensorX1 = None
+diff_sensorX1 = None
 
 
 def signal_handler(sig, frame):
@@ -242,8 +243,8 @@ async def read_sensor_data():
     try:
         # Open serial connection
         if not critical_stop:
-            ser3 = serial.Serial(com3_port, baud_rate_com3, timeout=1)
-            print(f"Connected to {com3_port} for sensor data")
+            ser3 = serial.Serial(com_port, baud_rate_com, timeout=1)
+            print(f"Connected to {com_port} for sensor data")
 
         print("▶ Press Ctrl+C to pause")
 
