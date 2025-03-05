@@ -102,8 +102,8 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com3_port = "COM5"  # Replace with your Arduino's port
-baud_rate_com3 = 9600  # Match this with your Arduino's baud rate
+com_port = "COM5"  # Replace with your Arduino's port
+baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 # Get the current timestamp for the filename
 timestamp_str = time.strftime("%Y-%m-%d_%H-%M-%S")
@@ -145,9 +145,9 @@ df = pd.DataFrame(
         "Sensor2",
         "Sensor3",
         "Sensor4",
-        "SensorX1",
-        "SensorX2",
-        "SensorX3",
+        "Force"
+#        "SensorX2",
+#        "SensorX3",
     ]
 )
 data_count = 0  # Counter for saving every 300 entries
@@ -289,7 +289,7 @@ async def read_sensor_data():
                         diff_sensorX1 = abs(sensor_values_float[4] - prev_sensorX1)
                         if diff_sensorX1 > 50:
                             warning_message = (
-                                f"⚠️ WARNING: SensorX1 value change {diff_sensorX1} "
+                                f"⚠️ WARNING: Force value change {diff_sensorX1} "
                                 f"exceeded 50.0!\nTimestamp: {current_time}\nChoose an option:"
                             )
                             threshold_exceeded = True
@@ -318,9 +318,9 @@ async def read_sensor_data():
                         "sensor2": sensor_values_float[1],
                         "sensor3": sensor_values_float[2],
                         "sensor4": sensor_values_float[3],
-                        "sensorX1": sensor_values_float[4],
-                        "sensorX2": sensor_values_float[5],
-                        "sensorX3": sensor_values_float[6],
+                        "Force": diff_sensorX1,
+#                        "sensorX2": sensor_values_float[5],
+#                        "sensorX3": sensor_values_float[6],
                     }
 
                     # Create a new DataFrame row
@@ -332,9 +332,9 @@ async def read_sensor_data():
                                 "Sensor2": sensor_values_float[1],
                                 "Sensor3": sensor_values_float[2],
                                 "Sensor4": sensor_values_float[3],
-                                "SensorX1": sensor_values_float[4],
-                                "SensorX2": sensor_values_float[5],
-                                "SensorX3": sensor_values_float[6],
+                                "Force": diff_sensorX1,
+                                # "SensorX2": sensor_values_float[5],
+                                # "SensorX3": sensor_values_float[6],
                             }
                         ]
                     )
@@ -389,9 +389,9 @@ async def read_sensor_data():
                                 "Sensor2",
                                 "Sensor3",
                                 "Sensor4",
-                                "SensorX1",
-                                "SensorX2",
-                                "SensorX3",
+                                "Force",
+                                # "SensorX2",
+                                # "SensorX3",
                             ]
                         )
                         data_count = 0
