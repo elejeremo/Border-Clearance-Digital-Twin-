@@ -97,7 +97,7 @@ const ChartsOverviewDemo = () => {
               <td>{data.sensor2}</td>
               <td>{data.sensor3}</td>
               <td>{data.sensor4}</td>
-              <td>{data.force}</td>
+              <td>{data.Force}</td>
            
             </tr>
           ))}
