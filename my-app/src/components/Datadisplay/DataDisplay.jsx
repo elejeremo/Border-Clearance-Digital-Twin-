@@ -3,17 +3,13 @@ import { LineChart } from '@mui/x-charts/LineChart';
 import { Gauge } from "@mui/x-charts/Gauge";
 import Stack from "@mui/material/Stack";
 
-
-
-
 const ChartsOverviewDemo = () => {
   const [sensorData, setSensorData] = useState([]);
   const [connected, setConnected] = useState(false);
   const websocketRef = useRef(null);
 
-  useEffect(() => {
+  useEffect(() => { //websocket upon mount
     websocketRef.current = new WebSocket("ws://localhost:8000/ws");
-
     websocketRef.current.onopen = () => {
       console.log("Connected to WebSocket");
       setConnected(true);
@@ -33,44 +29,45 @@ const ChartsOverviewDemo = () => {
 
   
   return (
+
+    
     <div>
      <LineChart
-  xAxis={[
-    {
-      data: Array.from({ length: sensorData.length }, (_, index) => index + 1), // Create an array of numbers from 1 to N
-    },
-  ]}
-  yAxis={[
-    {
-      min: 0,
-      max: 2,
-    },
-  ]}
-  series={[
-    {
-      data: sensorData.map((data) => data.sensor1),
-      color: "rgb(255, 0, 0)",  // Red
-    },
-    {
-      data: sensorData.map((data) => data.sensor2),
-      color: "rgb(255, 255, 0)",  // Yellow
-    },
-    {
-      data: sensorData.map((data) => data.sensor3),
-      color: "rgb(173, 53, 53)",  // Green
-    },
-    {
-      data: sensorData.map((data) => data.sensor4),
-      color: "rgb(35, 137, 35)",  // Green
-    }
-    
-  ]}
-  margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
-  height={150}
-/>
+        xAxis={[
+          {
+            data: Array.from({ length: sensorData.length }, (_, index) => index + 1), // Create an array of numbers from 1 to N
+          },
+        ]}
+        yAxis={[
+          {
+            min: 0,
+            max: 2,
+          },
+        ]}
+      series={[
+        {
+          data: sensorData.map((data) => data.sensor1),
+          color: "rgb(255, 0, 0)",  // Red
+        },
+        {
+          data: sensorData.map((data) => data.sensor2),
+          color: "rgb(255, 255, 0)",  // Yellow
+        },
+        {
+          data: sensorData.map((data) => data.sensor3),
+          color: "rgb(173, 53, 53)",  // Green
+        },
+        {
+          data: sensorData.map((data) => data.sensor4),
+          color: "rgb(35, 137, 35)",  // Green
+        }
+        
+      ]}
+      margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
+      height={150}
+      />
 
 
-  
       <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 3 }}>
         <Gauge width={100} height={100} value={60} color="#430099" />
         <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />

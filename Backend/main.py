@@ -449,9 +449,6 @@ async def shutdown_event():
 
 
 
-
-
-
 # Pydantic models
 class CameraView(BaseModel):
     position: List[float]
@@ -472,7 +469,7 @@ class AnnotationPoint(BaseModel):  # Changed from Gate to Point to match your da
     gateId: str
     content: Dict[str, Any]
 
-    def __init__(self, **data):
+    def __init__(self, **data): # proccess the colour of the points
         if 'content' in data and 'Health' in data['content']:
             color1, color2 = get_health_colors(data['content']['Health'])
             if 'Rendering' not in data:

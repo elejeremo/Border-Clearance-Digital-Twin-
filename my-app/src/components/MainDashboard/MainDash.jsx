@@ -12,7 +12,9 @@ import ChartsOverviewDemo from "../Datadisplay/DataDisplay";
         };
         const handleAnnotationSelect = (annotationData) => {
             setActiveAnnotation(annotationData);
+            console.log(activeAnnotation)
         };
+
         return (
             <div className="MainDash">
                 <div className="topbar"><Cards/></div>
@@ -27,11 +29,11 @@ import ChartsOverviewDemo from "../Datadisplay/DataDisplay";
                     <div className="fixed-info-widget">
                         <div className="info-widget">
                             <h2>{activeGate.gateTitle}</h2>
-                            
-                                <ChartsOverviewDemo/>
+                             
                                     <h3>
                                     "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes
                                     </h3>
+
                         </div>
                     </div>
                 )}
@@ -41,7 +43,10 @@ import ChartsOverviewDemo from "../Datadisplay/DataDisplay";
                         <div className="info-widget">
                             <h2>{activeAnnotation.title}</h2>
                             
-                                
+                                {/* Specific and explicit check for Scanner annotation */}
+                                {activeAnnotation && activeAnnotation.title === "Scanner" && (
+                                    <ChartsOverviewDemo />
+                                )}
                                     <h3>
                                     "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes
                                     </h3>
