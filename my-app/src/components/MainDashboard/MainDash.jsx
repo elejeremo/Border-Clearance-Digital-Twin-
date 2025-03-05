@@ -42,7 +42,6 @@ import ChartsOverviewDemo from "../Datadisplay/DataDisplay";
                     <div className="fixed-info-widget">
                         <div className="info-widget">
                             <h2>{activeAnnotation.title}</h2>
-                            
                                 {/* Specific and explicit check for Scanner annotation */}
                                 {activeAnnotation && activeAnnotation.title === "Scanner" && (
                                     <ChartsOverviewDemo />

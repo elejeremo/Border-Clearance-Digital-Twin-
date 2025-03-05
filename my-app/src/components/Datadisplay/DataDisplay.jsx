@@ -30,7 +30,7 @@ const ChartsOverviewDemo = () => {
   
   return (
 
-    
+
     <div>
      <LineChart
         xAxis={[
@@ -85,9 +85,8 @@ const ChartsOverviewDemo = () => {
             <th>Sensor 2</th>
             <th>Sensor 3</th>
             <th>Sensor 4</th>
-            <th>Sensor X1</th>
-            <th>Sensor X2</th>
-            <th>Sensor X3</th>
+            <th>Force accelerotmeter</th>
+     
           </tr>
         </thead>
         <tbody>
@@ -98,9 +97,8 @@ const ChartsOverviewDemo = () => {
               <td>{data.sensor2}</td>
               <td>{data.sensor3}</td>
               <td>{data.sensor4}</td>
-              <td>{data.sensorX1}</td>
-              <td>{data.sensorX2}</td>
-              <td>{data.sensorX3}</td>
+              <td>{data.force}</td>
+           
             </tr>
           ))}
         </tbody>
