@@ -158,8 +158,8 @@ delete_start_time = time.time()
 paused = False
 critical_stop = False  # If a critical stop occurs, prevent auto-resume
 exit_script = False  # Flag to indicate when to exit the script
-prev_sensorX1 = None
-diff_sensorX1 = None
+prev_sensorX1 = 0
+diff_sensorX1 = 0
 
 
 def signal_handler(sig, frame):
