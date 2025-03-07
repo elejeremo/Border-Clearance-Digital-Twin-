@@ -9,63 +9,60 @@ import Button from '@mui/material/Button';
 
 
 
-const ThreeModel = ({onGateSelect, onAnnotationSelect}) => {
+const ThreeModel = ({onGateSelect, onAnnotationSelect, annotations, gates, fetchAnnotationPointData}) => {
   const cameraControlRef = useRef();
   const [activePoint, setActivePoint] = useState(null);
   const [activeGatePoint, setActiveGatePoint] = useState(null);
-  const [annotations, setAnnotations] = useState([]);
-  const[gates,setGates] = useState([])
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const debugLog = (message, data) => {
-    console.log(`[Debug] ${message}:`, data);
-  };
+
+  // const debugLog = (message, data) => {
+  //   console.log(`[Debug] ${message}:`, data);
+  // };
   
-  const fetchAnnotationPointData = async () => {
-    try {
-      setIsLoading(true);
-      const annotationresponse = await api.get('/api/annotationdata');
-      const gateresponse = await api.get('/api/gatedata');
-      debugLog('Raw API Response', gateresponse.data);
-      const transformedGateData = gateresponse.data.gate_points.map(item => ({
-        gatePosition: item.gatePosition,
-        gateTitle: item.gateTitle,
-        gateId: item.gateId,
-        color1: item.color1,
-        color2: item.color2,
-        cameraView: item.cameraView,
-      }));
+  // const fetchAnnotationPointData = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const annotationresponse = await api.get('/api/annotationdata');
+  //     const gateresponse = await api.get('/api/gatedata');
+  //     debugLog('Raw API Response', gateresponse.data);
+  //     const transformedGateData = gateresponse.data.gate_points.map(item => ({
+  //       gatePosition: item.gatePosition,
+  //       gateTitle: item.gateTitle,
+  //       gateId: item.gateId,
+  //       color1: item.color1,
+  //       color2: item.color2,
+  //       cameraView: item.cameraView,
+  //     }));
       
-      // Transform backend data to match frontend structure
-      const transformedAnnotationData = annotationresponse.data.annotation_points.map(item => ({
-        position: item.Rendering.position,
-        widgetposition: item.Rendering.widgetposition,
-        title: item.title,
-        gateId: item.gateId,
-        description: item.Rendering.description,
-        color1: item.Rendering.color1,
-        color2: item.Rendering.color2,
-        cameraView: item.Rendering.cameraView,
-        contentTitle: item.title,
-        content: item.content
-      }));
-      debugLog('data', transformedAnnotationData)
-      setAnnotations(transformedAnnotationData);
-      setGates(transformedGateData);
-      setError(null);
-    } catch (error) {
-      console.error("Error fetching annotation points:", error);
-      setError("Failed to load annotation data");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     // Transform backend data to match frontend structure
+  //     const transformedAnnotationData = annotationresponse.data.annotation_points.map(item => ({
+  //       position: item.Rendering.position,
+  //       widgetposition: item.Rendering.widgetposition,
+  //       title: item.title,
+  //       gateId: item.gateId,
+  //       description: item.Rendering.description,
+  //       color1: item.Rendering.color1,
+  //       color2: item.Rendering.color2,
+  //       cameraView: item.Rendering.cameraView,
+  //       contentTitle: item.title,
+  //       content: item.content
+  //     }));
+  //     debugLog('data', transformedAnnotationData)
+  //     setAnnotations(transformedAnnotationData);
+  //     setGates(transformedGateData);
+  //     setError(null);
+  //   } catch (error) {
+  //     console.error("Error fetching annotation points:", error);
+  //     setError("Failed to load annotation data");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  // Fetch data when component mounts
+  // // Fetch data when component mounts
 
-  useEffect(() => {
-    fetchAnnotationPointData();
-  }, []);
+  // useEffect(() => {
+  //   fetchAnnotationPointData();
+  // }, []);
 
 
   const handleSecondlevelzoom = (annotation) => {

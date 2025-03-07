@@ -30,7 +30,7 @@ const AnnotationPoint = ({ position, title, onClick, isActive, color1, color2, c
         >
           <div className="annotation-widget">
             <h2>{title}</h2>
-            <DataCards content={content} />
+            <DataCards content={content} /> 
           </div>
         </Html>
       )}

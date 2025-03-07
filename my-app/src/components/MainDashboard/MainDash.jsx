@@ -1,15 +1,69 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect} from "react";
 import "./MainDash.css"
 import Cards from "../Cards1/Cards1";
 import ThreeModel from "../Threefibermodel/ThreeModel";
 import ChartsOverviewDemo from "../Datadisplay/DataDisplay";
-
+import api from "../../api.js"
     const MainDash = () => {
         const [activeGate, setActiveGate] = useState(null);
         const [activeAnnotation, setActiveAnnotation] = useState(null)
+        const [annotations, setAnnotations] = useState([]);
         const handleGateSelect = (gateData) => {
             setActiveGate(gateData);
         };
+        
+          const[gates,setGates] = useState([])
+          const [isLoading, setIsLoading] = useState(true);
+          const [error, setError] = useState(null);
+          const debugLog = (message, data) => {
+            console.log(`[Debug] ${message}:`, data);
+          };
+        const fetchAnnotationPointData = async () => {
+            try {
+              setIsLoading(true);
+              const annotationresponse = await api.get('/api/annotationdata');
+              const gateresponse = await api.get('/api/gatedata');
+              debugLog('Raw API Response', gateresponse.data);
+              const transformedGateData = gateresponse.data.gate_points.map(item => ({
+                gatePosition: item.gatePosition,
+                gateTitle: item.gateTitle,
+                gateId: item.gateId,
+                color1: item.color1,
+                color2: item.color2,
+                cameraView: item.cameraView,
+              }));
+              
+              // Transform backend data to match frontend structure
+              const transformedAnnotationData = annotationresponse.data.annotation_points.map(item => ({
+                position: item.Rendering.position,
+                widgetposition: item.Rendering.widgetposition,
+                title: item.title,
+                gateId: item.gateId,
+                description: item.Rendering.description,
+                color1: item.Rendering.color1,
+                color2: item.Rendering.color2,
+                cameraView: item.Rendering.cameraView,
+                contentTitle: item.title,
+                content: item.content
+              }));
+              debugLog('data', transformedAnnotationData)
+              setAnnotations(transformedAnnotationData);
+              setGates(transformedGateData);
+              setError(null);
+            } catch (error) {
+              console.error("Error fetching annotation points:", error);
+              setError("Failed to load annotation data");
+            } finally {
+              setIsLoading(false);
+            }
+          };
+        
+          // Fetch data when component mounts
+        
+          useEffect(() => {
+            fetchAnnotationPointData();
+          }, []);
+
         const handleAnnotationSelect = (annotationData) => {
             setActiveAnnotation(annotationData);
             console.log(activeAnnotation)
@@ -22,6 +76,9 @@ import ChartsOverviewDemo from "../Datadisplay/DataDisplay";
                     <ThreeModel 
                     onGateSelect = {handleGateSelect} 
                     onAnnotationSelect = {handleAnnotationSelect}
+                    annotations={annotations}
+                    gates= {gates}
+                    fetchAnnotationPointData={fetchAnnotationPointData}
                     />
                 </div>
                 
@@ -43,7 +100,9 @@ import ChartsOverviewDemo from "../Datadisplay/DataDisplay";
                         <div className="info-widget">
                             <h2>{activeAnnotation.title}</h2>
                                 {/* Specific and explicit check for Scanner annotation */}
-                                {activeAnnotation && activeAnnotation.title === "Scanner" && (
+                                {activeAnnotation && 
+                                activeAnnotation.title === "Scanner" && 
+                                activeAnnotation.gateId === "gate3" &&(
                                     <ChartsOverviewDemo />
                                 )}
                                     <h3>

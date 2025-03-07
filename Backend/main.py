@@ -366,6 +366,9 @@ async def read_sensor_data():
                     # Print data readings
                     print(f"[{current_time}] SensorValues: {sensor_values_float[0],sensor_values_float[1],sensor_values_float[2],sensor_values_float[3], diff_sensorX1}")
 
+
+
+
                     # Broadcast sensor data via WebSocket
                     await manager.broadcast(json.dumps(sensor_data))
 
