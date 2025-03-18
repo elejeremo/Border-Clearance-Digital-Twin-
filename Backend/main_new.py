@@ -5,6 +5,7 @@ from typing import Dict, Any, List
 import uvicorn
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
+import numpy as np
 
 # pip install fastapi uvicorn websockets pyautogui keyboard pandas pyserial
 #
@@ -157,8 +158,15 @@ delete_start_time = time.time()
 
 
 def calculate_alert_threshold(df):
-    mean_value = df[["Sensor1", "Sensor2", "Sensor3", "Sensor4"]].mean().mean()
-    std_dev = df[["Sensor1", "Sensor2", "Sensor3", "Sensor4"]].std().mean()
+    mean_value = (
+        df[["Sensor1", "Sensor2", "Sensor3", "Sensor4"]]
+        .replace(0, np.nan)
+        .mean()
+        .mean()
+    )
+    std_dev = (
+        df[["Sensor1", "Sensor2", "Sensor3", "Sensor4"]].replace(0, np.nan).std().mean()
+    )
     return mean_value + 1.05 * std_dev
 
 
@@ -321,18 +329,6 @@ async def read_sensor_data():
                         else:
                             print("Resuming data collection...")
 
-                    # Create a sensor data dictionary
-                    sensor_data = {
-                        "timestamp": current_time,
-                        "sensor1": sensor_values_float[0],
-                        "sensor2": sensor_values_float[1],
-                        "sensor3": sensor_values_float[2],
-                        "sensor4": sensor_values_float[3],
-                        "Force": diff_sensorX1,
-                        #                        "sensorX2": sensor_values_float[5],
-                        #                        "sensorX3": sensor_values_float[6],
-                    }
-
                     # Create a new DataFrame row
                     new_row = pd.DataFrame(
                         [
@@ -354,6 +350,7 @@ async def read_sensor_data():
                     data_count += 1  # Increment data counter
                     avg_value = (
                         new_row[["Sensor1", "Sensor2", "Sensor3", "Sensor4"]]
+                        .replace(0, np.nan)
                         .mean(axis=1)
                         .iloc[0]
                     )
@@ -380,11 +377,28 @@ async def read_sensor_data():
                         health_status = "Red"
 
                     output_data = {
-                        "sensor_data": sensor_data,
+                        "average_value": avg_value,
                         "alert_count": alert_count,
                         "alert_status": alert_status,
                         "health_status_value": health_status_value,
                         "health_status": health_status,
+                    }
+
+                    # Create a sensor data dictionary
+                    sensor_data = {
+                        "timestamp": current_time,
+                        "sensor1": sensor_values_float[0],
+                        "sensor2": sensor_values_float[1],
+                        "sensor3": sensor_values_float[2],
+                        "sensor4": sensor_values_float[3],
+                        "Force": diff_sensorX1,
+                        "average_value": avg_value,
+                        "alert_count": alert_count,
+                        "alert_status": alert_status,
+                        "health_status_value": health_status_value,
+                        "health_status": health_status,
+                        #                        "sensorX2": sensor_values_float[5],
+                        #                        "sensorX3": sensor_values_float[6],
                     }
                     # # Insert data into SQL database
                     # cursor.execute(
@@ -411,7 +425,7 @@ async def read_sensor_data():
                     )
 
                     # Broadcast sensor data via WebSocket
-                    await manager.broadcast(json.dumps(output_data))
+                    await manager.broadcast(json.dumps(sensor_data))
 
                     # Save to CSV every 300 entries
                     if data_count >= 300:
