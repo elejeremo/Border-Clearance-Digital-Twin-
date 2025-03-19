@@ -109,6 +109,9 @@ const ChartsOverviewDemo = () => {
               <td>{data.average_value}</td>
               <td>{data.alert_count}</td>
               <td>{data.alert_status}</td>
+              <td>{data.force_alert_value}</td>
+              <td>{data.force_alert_count}</td>
+              <td>{data.force_alert_status}</td>
               <td>{data.health_status_value}</td>
               <td>{data.health_status}</td>
          

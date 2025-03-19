@@ -106,6 +106,13 @@ manager = ConnectionManager()
 com_port = "COM7"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
+# # Port to Mega for controlling of motor
+# drive_port = "COM9"
+# drive_baud_rate = 115200
+
+# # Open serial connection for motor control
+# drive_ser = serial.Serial(drive_port, drive_baud_rate, timeout=1)
+
 # Get the current timestamp for the filename
 timestamp_str = time.strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -151,7 +158,8 @@ df = pd.DataFrame(
         #        "SensorX3",
     ]
 )
-alert_count = 0
+alert_count = 0  # alert for current in height adaptive camera
+force_alert_count = 0  # alert tracking force from accelerometer
 data_count = 0  # Counter for saving every 300 entries
 start_time = time.time()  # Timer for auto-refresh
 delete_start_time = time.time()
@@ -244,6 +252,12 @@ async def websocket_endpoint(websocket: WebSocket):
 #     return result
 
 
+# async def control_motor(command):
+#     if drive_ser.is_open:
+#         drive_ser.write(command.encode())
+#         print(f"Command '{command}' sent to motor.")
+
+
 # Function to read sensor data and broadcast via WebSocket
 async def read_sensor_data():
     global \
@@ -255,6 +269,7 @@ async def read_sensor_data():
         start_time, \
         delete_start_time, \
         df, \
+        force_alert_count, \
         alert_count
 
     try:
@@ -360,15 +375,26 @@ async def read_sensor_data():
                         alert_count += 1
 
                     # Alert classification
-                    if alert_count > 20:
+                    if alert_count > 50:
                         alert_value, alert_status = 20, "Red"
-                    elif 10 <= alert_count <= 19:
+                    elif 20 <= alert_count <= 50:
                         alert_value, alert_status = 10, "Yellow"
                     else:
                         alert_value, alert_status = 5, "Green"
 
+                    if new_row["Force"].iloc[0] == 1.0:
+                        force_alert_count += 1
+
+                    # Alert classification for force
+                    if force_alert_count > 10:
+                        force_alert_value, force_alert_status = 10, "Red"
+                    elif 5 <= force_alert_count <= 10:
+                        force_alert_value, force_alert_status = 5, "Yellow"
+                    else:
+                        force_alert_value, force_alert_status = 2, "Green"
+
                     # Health Status Calculation
-                    health_status_value = 100 - alert_value
+                    health_status_value = 100 - alert_value - force_alert_value
                     if health_status_value >= 80:
                         health_status = "Green"
                     elif 50 <= health_status_value < 80:
@@ -395,6 +421,9 @@ async def read_sensor_data():
                         "average_value": avg_value,
                         "alert_count": alert_count,
                         "alert_status": alert_status,
+                        "force_alert_value": force_alert_value,
+                        "force_alert_count": force_alert_count,
+                        "force_alert_status": force_alert_status,
                         "health_status_value": health_status_value,
                         "health_status": health_status,
                         #                        "sensorX2": sensor_values_float[5],
