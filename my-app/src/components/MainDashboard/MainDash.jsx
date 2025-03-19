@@ -1,15 +1,24 @@
-    import React, { useState, useRef, useEffect} from "react";
+    import React, { useState, useRef, useEffect,Suspense} from "react";
     import "./MainDash.css"
     import Cards from "../Cards1/Cards1";
     import ThreeModel from "../Threefibermodel/ThreeModel";
-    import ChartsOverviewDemo from "../Datadisplay/DataDisplay";
     import api from "../../api.js"
         const MainDash = () => {
             const [activeGate, setActiveGate] = useState(null);
             const [activeAnnotation, setActiveAnnotation] = useState(null)
             const [annotations, setAnnotations] = useState([]);
+            const componentMap = {
+                'gate3_Scanner': React.lazy(() => import('../Datadisplay/DataDisplay')),
+                'gate2_Front Gate 2': React.lazy(() => import('../Datadisplay/DataDisplay'))
+              };
+
             const handleGateSelect = (gateData) => {
                 setActiveGate(gateData);
+            };
+
+            const handleAnnotationSelect = (annotationData) => {
+                setActiveAnnotation(annotationData);
+                console.log(activeAnnotation)
             };
             
             const[gates,setGates] = useState([])
@@ -64,10 +73,15 @@
                 fetchAnnotationPointData();
             }, []);
 
-            const handleAnnotationSelect = (annotationData) => {
-                setActiveAnnotation(annotationData);
-                console.log(activeAnnotation)
-            };
+            
+            const getComponentForAnnotation = (annotation) => {
+                // You could have more complex logic here
+                // Like checking permissions, feature flags, etc.
+                if (!annotation) return null;
+                
+                const compositeKey = `${annotation.gateId}_${annotation.title}`;
+                return componentMap[compositeKey] || null;
+              };
 
             return (
                 <div className="MainDash">
@@ -103,11 +117,21 @@
                             <div className="info-widget">
                                 <h2>{activeAnnotation.title}</h2>
                                     {/* Specific and explicit check for Scanner annotation */}
-                                    {activeAnnotation && 
+                                    {/* {activeAnnotation && 
                                     activeAnnotation.title === "Scanner" && 
                                     activeAnnotation.gateId === "gate3" &&(
                                         <ChartsOverviewDemo />
-                                    )}
+                                    )} */}
+
+                                    {/* Dynamic component rendering with Suspense */}
+                                    {(() => {
+                                        const DynamicComponent = getComponentForAnnotation(activeAnnotation);
+                                        return DynamicComponent ? (
+                                            <Suspense fallback={<div>Loading component...</div>}>
+                                                <DynamicComponent />
+                                            </Suspense>
+                                        ) : null;
+                                    })()}
                                         <h3>
                                         "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes
                                         </h3>
