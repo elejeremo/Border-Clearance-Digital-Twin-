@@ -1,7 +1,11 @@
-import React, { useState, useRef, useEffect} from "react";
+import React, { useState, useRef, useEffect, Suspense} from "react";
 import { LineChart } from '@mui/x-charts/LineChart';
 import { Gauge } from "@mui/x-charts/Gauge";
 import Stack from "@mui/material/Stack";
+import Card from '@mui/material/Card';
+import { CardContent } from "@mui/material";
+import Typography from '@mui/material/Typography';
+import "./DataDisplay.css"
 
 const ChartsOverviewDemo = () => {
   const [sensorData, setSensorData] = useState([]);
@@ -30,73 +34,100 @@ const ChartsOverviewDemo = () => {
   
   return (
 
+    <div className="card_formatting">
+      <Card style= {{borderRadius:'10px',backgroundColor:"#fdf9f9"}}>
+        <CardContent>
+            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                  Current Sensors
+            </Typography>
+                  <LineChart
+                  xAxis={[
+                    {
+                      data: Array.from({ length: sensorData.length }, (_, index) => index + 1), // Create an array of numbers from 1 to N
+                    },
+                  ]}
+                  yAxis={[
+                    {
+                      min: 0,
+                      max: 2,
+                    },
+                  ]}
+                series={[
+                  {
+                    data: sensorData.map((data) => data.sensor1),
+                    color: "rgb(255, 0, 0)",  // Red
+                  },
+                  {
+                    data: sensorData.map((data) => data.sensor2),
+                    color: "rgb(255, 255, 0)",  // Yellow
+                  },
+                  {
+                    data: sensorData.map((data) => data.sensor3),
+                    color: "rgb(173, 53, 53)",  // Green
+                  },
+                  {
+                    data: sensorData.map((data) => data.sensor4),
+                    color: "rgb(35, 137, 35)",  // Green
+                  }
+                  
+                ]}
+                margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
+                height={150}
+                />
+        </CardContent>
+      </Card>
+     
+      <Card style= {{borderRadius:'10px',backgroundColor:"#fdf9f9"}} >
+        <CardContent>
+          <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+              Current Average Value
+          </Typography>
+          <Typography variant="h5" component="div">
+            {sensorData.average_value}
+          </Typography>
+        </CardContent>
+      </Card>
 
-    <div>
-     <LineChart
-        xAxis={[
-          {
-            data: Array.from({ length: sensorData.length }, (_, index) => index + 1), // Create an array of numbers from 1 to N
-          },
-        ]}
-        yAxis={[
-          {
-            min: 0,
-            max: 2,
-          },
-        ]}
-      series={[
-        {
-          data: sensorData.map((data) => data.sensor1),
-          color: "rgb(255, 0, 0)",  // Red
-        },
-        {
-          data: sensorData.map((data) => data.sensor2),
-          color: "rgb(255, 255, 0)",  // Yellow
-        },
-        {
-          data: sensorData.map((data) => data.sensor3),
-          color: "rgb(173, 53, 53)",  // Green
-        },
-        {
-          data: sensorData.map((data) => data.sensor4),
-          color: "rgb(35, 137, 35)",  // Green
-        }
+      <Card style= {{borderRadius:'10px',backgroundColor:"#fdf9f9"}}>
+          <CardContent>
+              <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                  Alert Status
+              </Typography>
+              <Typography variant="h5" component="div">
+                  {sensorData.alert_status}
+              </Typography>
+          </CardContent>
+      </Card>
         
-      ]}
-      margin={{ top: 10, right: 10, left: 25, bottom: 25 }}
-      height={150}
-      />
 
 
       <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 3 }}>
         <Gauge width={100} height={100} value={60} color="#430099" />
         <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />
         <div className="sensor-container">
-      <h1>Live Sensor Data</h1>
-      <div className="connection-status">
-        <span className={`status-indicator ${connected ? "connected" : "disconnected"}`}></span>
-        <span>{connected ? "Connected" : "Disconnected"}</span>
-      </div>
-      <table className="sensor-table">
-        <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>Sensor 1</th>
-            <th>Sensor 2</th>
-            <th>Sensor 3</th>
-            <th>Sensor 4</th>
-            <th>Force accelerotmeter</th>
-            <th>average value</th>
-            <th>Health</th>
-            <th>average_value</th>
-            <th>alert_count</th>
-            <th>alert_status</th>
-            <th>health_status_value</th>
-            <th>health_status</th>
-          
-     
-          </tr>
-        </thead>
+          <h1>Live Sensor Data</h1>
+            <div className="connection-status">
+              <span className={`status-indicator ${connected ? "connected" : "disconnected"}`}></span>
+              <span>{connected ? "Connected" : "Disconnected"}</span>
+            </div>
+          <table className="sensor-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Sensor 1</th>
+                <th>Sensor 2</th>
+                <th>Sensor 3</th>
+                <th>Sensor 4</th>
+                <th>Force accelerotmeter</th>
+                <th>average value</th>
+                <th>Health</th>
+                <th>average_value</th>
+                <th>alert_count</th>
+                <th>alert_status</th>
+                <th>health_status_value</th>
+                <th>health_status</th>
+              </tr>
+            </thead>
         <tbody>
           {sensorData.map((data, index) => (
             <tr key={index}>
@@ -120,7 +151,10 @@ const ChartsOverviewDemo = () => {
         </tbody>
       </table>
     </div>
+    
       </Stack>
+
+      
     </div>
   );
   
