@@ -9,28 +9,30 @@ import "./DataDisplay.css"
 import { useWebSocket } from "../WebSocketContext/Websocket";
 
 const ChartsOverviewDemo = () => {
-  const [sensorData, setSensorData] = useWebSocket();
-  const [connected, setConnected] = useState(false);
+  //const [sensorData, setSensorData] = useWebSocket();
+  const { sensorData, connected } = useWebSocket();
+  
+ //const [connected, setConnected] = useState(false);
   const websocketRef = useRef(null);
 
-  useEffect(() => { //websocket upon mount
-    // websocketRef.current = new WebSocket("ws://localhost:8000/ws");
-    // websocketRef.current.onopen = () => {
-    //   console.log("Connected to WebSocket");
-    //   setConnected(true);
-    // };
+  // useEffect(() => { //websocket upon mount
+  //   // websocketRef.current = new WebSocket("ws://localhost:8000/ws");
+  //   // websocketRef.current.onopen = () => {
+  //   //   console.log("Connected to WebSocket");
+  //   //   setConnected(true);
+  //   // };
 
-    websocketRef.current.onmessage = (event) => {
-      try {
-        const newData = JSON.parse(event.data);
-        setSensorData((prevData) => [newData, ...prevData].slice(0, 10)); // Keep latest 10 readings
-      } catch (error) {
-        console.error("Error parsing WebSocket message:", error);
-      }
-    };
+  //   websocketRef.current.onmessage = (event) => {
+  //     try {
+  //       const newData = JSON.parse(event.data);
+  //       setSensorData((prevData) => [newData, ...prevData].slice(0, 10)); // Keep latest 10 readings
+  //     } catch (error) {
+  //       console.error("Error parsing WebSocket message:", error);
+  //     }
+  //   };
 
   
-  }, []);
+  // }, []);
 
   
   return (
