@@ -3,6 +3,9 @@
     import Cards from "../Cards1/Cards1";
     import ThreeModel from "../Threefibermodel/ThreeModel";
     import api from "../../api.js"
+
+    import { WebSocketProvider } from '../WebSocketContext/Websocket';
+
         const MainDash = () => {
             const [activeGate, setActiveGate] = useState(null);
             const [activeAnnotation, setActiveAnnotation] = useState(null)
@@ -10,6 +13,9 @@
             const componentMap = {
                 'gate3_Scanner': React.lazy(() => import('../Datadisplay/DataDisplay')),
                 'gate2_Front Gate 2': React.lazy(() => import('../Datadisplay/DataDisplay'))
+              };
+            const componentGateMap = {
+                'gate3': React.lazy(() => import('../Datadisplay/DataDisplay'))
               };
 
             const handleGateSelect = (gateData) => {
@@ -84,6 +90,8 @@
               };
 
             return (
+
+                <WebSocketProvider>
                 <div className="MainDash">
                     <div className="topbar">
                         <Cards/>
@@ -103,7 +111,15 @@
                         <div className="fixed-info-widget">
                             <div className="info-widget">
                                 <h2>{activeGate.gateTitle}</h2>
-                                
+                                    {/* Dynamic component (gate) rendering with Suspense */}
+                                    {(() => {
+                                        const DynamicGateComponent = getComponentForAnnotation(activeAnnotation);
+                                        return DynamicGateComponent ? (
+                                            <Suspense fallback={<div>Loading component...</div>}>
+                                                <DynamicGateComponent />
+                                            </Suspense>
+                                        ) : null;
+                                    })()}
                                         <h3>
                                         "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes
                                         </h3>
@@ -115,33 +131,26 @@
                         {activeAnnotation && (
                         <div className="fixed-info-widget">
                             <div className="info-widget">
-                                <h2>{activeAnnotation.title}</h2>
-                                    {/* Specific and explicit check for Scanner annotation */}
-                                    {/* {activeAnnotation && 
-                                    activeAnnotation.title === "Scanner" && 
-                                    activeAnnotation.gateId === "gate3" &&(
-                                        <ChartsOverviewDemo />
-                                    )} */}
-
-                                    {/* Dynamic component rendering with Suspense */}
+                                <h2>
+                                    {activeAnnotation.title}
+                                </h2>
+                                    {/* Dynamic component (annotation) rendering with Suspense */}
                                     {(() => {
-                                        const DynamicComponent = getComponentForAnnotation(activeAnnotation);
-                                        return DynamicComponent ? (
+                                        const DynamicAnnotationComponent = getComponentForAnnotation(activeAnnotation);
+                                        return DynamicAnnotationComponent ? (
                                             <Suspense fallback={<div>Loading component...</div>}>
-                                                <DynamicComponent />
+                                                <DynamicAnnotationComponent />
                                             </Suspense>
                                         ) : null;
                                     })()}
-                                        <h3>
-                                        "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes
-                                        </h3>
+                                        
                             </div>
                         </div>
                     )}
 
 
                 </div>
-                
+                </WebSocketProvider>
             )
 
         }

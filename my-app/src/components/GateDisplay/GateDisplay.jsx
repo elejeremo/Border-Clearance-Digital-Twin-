@@ -5,20 +5,20 @@ import Stack from "@mui/material/Stack";
 import Card from '@mui/material/Card';
 import { CardContent } from "@mui/material";
 import Typography from '@mui/material/Typography';
-import "./DataDisplay.css"
-import { useWebSocket } from "../WebSocketContext/Websocket";
+import "./GateDisplay.css"
+
 
 const ChartsOverviewDemo = () => {
-  const [sensorData, setSensorData] = useWebSocket();
+  const [sensorData, setSensorData] = useState([]);
   const [connected, setConnected] = useState(false);
   const websocketRef = useRef(null);
 
   useEffect(() => { //websocket upon mount
-    // websocketRef.current = new WebSocket("ws://localhost:8000/ws");
-    // websocketRef.current.onopen = () => {
-    //   console.log("Connected to WebSocket");
-    //   setConnected(true);
-    // };
+    websocketRef.current = new WebSocket("ws://localhost:8000/ws");
+    websocketRef.current.onopen = () => {
+      console.log("Connected to WebSocket");
+      setConnected(true);
+    };
 
     websocketRef.current.onmessage = (event) => {
       try {
