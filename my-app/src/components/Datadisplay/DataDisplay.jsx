@@ -86,7 +86,7 @@ const ChartsOverviewDemo = () => {
               Current Average Value
           </Typography>
           <Typography variant="h5" component="div">
-            {sensorData.average_value}
+            {sensorData[0].average_value}
           </Typography>
         </CardContent>
       </Card>
@@ -97,7 +97,7 @@ const ChartsOverviewDemo = () => {
                   Alert Status
               </Typography>
               <Typography variant="h5" component="div">
-                  {sensorData.alert_status}
+                  {sensorData[0].alert_status}
               </Typography>
           </CardContent>
       </Card>
