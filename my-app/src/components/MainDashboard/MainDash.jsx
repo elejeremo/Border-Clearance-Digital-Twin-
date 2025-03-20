@@ -12,10 +12,10 @@
             const [annotations, setAnnotations] = useState([]);
             const componentMap = {
                 'gate3_Scanner': React.lazy(() => import('../Datadisplay/DataDisplay')),
-                'gate2_Front Gate 2': React.lazy(() => import('../Datadisplay/DataDisplay'))
+              
               };
             const componentGateMap = {
-                'gate3': React.lazy(() => import('../Datadisplay/DataDisplay'))
+                'gate3': React.lazy(()=> import('../FrontGateDisplay/GateDisplay')),
               };
 
             const handleGateSelect = (gateData) => {
@@ -89,6 +89,16 @@
                 return componentMap[compositeKey] || null;
               };
 
+
+            const getComponentForGate = (gate) => {
+                // You could have more complex logic here
+                // Like checking permissions, feature flags, etc.
+                if (!gate) return null;
+                
+                const compositeGateKey = `${gate.gateTitle}`;
+                return componentGateMap[compositeGateKey] || null;
+              };
+
             return (
 
                 <WebSocketProvider>
@@ -113,13 +123,15 @@
                                 <h2>{activeGate.gateTitle}</h2>
                                     {/* Dynamic component (gate) rendering with Suspense */}
                                     {(() => {
-                                        const DynamicGateComponent = getComponentForAnnotation(activeAnnotation);
+                                        const DynamicGateComponent = getComponentForGate(activeGate);
+                                        console.log(DynamicGateComponent)
                                         return DynamicGateComponent ? (
                                             <Suspense fallback={<div>Loading component...</div>}>
-                                                <DynamicGateComponent />
+                                                <DynamicGateComponent/>
                                             </Suspense>
                                         ) : null;
                                     })()}
+
                                         <h3>
                                         "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes
                                         </h3>
@@ -137,6 +149,7 @@
                                     {/* Dynamic component (annotation) rendering with Suspense */}
                                     {(() => {
                                         const DynamicAnnotationComponent = getComponentForAnnotation(activeAnnotation);
+                                        console.log(DynamicAnnotationComponent)
                                         return DynamicAnnotationComponent ? (
                                             <Suspense fallback={<div>Loading component...</div>}>
                                                 <DynamicAnnotationComponent />
