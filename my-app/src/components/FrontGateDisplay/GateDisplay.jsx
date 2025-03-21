@@ -21,10 +21,25 @@ const GateOverview = () => {
       <Card style= {{borderRadius:'10px',backgroundColor:"#fdf9f9"}}>
           <CardContent>
               <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
-                  Alert Status
+                  Health Status
               </Typography>
-              <Typography variant="h5" component="div">
-                  {sensorData.alert_status}
+              <Typography variant="h5" component="div" className="No_data_avail">
+                    {sensorData && sensorData.length > 0 && sensorData[0] ? 
+                        sensorData[0].health_status : 
+                          "No data to display"}
+              </Typography>
+          </CardContent>
+      </Card>
+
+      <Card style= {{borderRadius:'10px',backgroundColor:"#fdf9f9"}}>
+          <CardContent>
+              <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                  Health Status Value
+              </Typography>
+              <Typography variant="h5" component="div" className="No_data_avail">
+                    {sensorData && sensorData.length > 0 && sensorData[0] ? 
+                              sensorData[0].health_status_value : 
+                                "No data to display"}
               </Typography>
           </CardContent>
       </Card>

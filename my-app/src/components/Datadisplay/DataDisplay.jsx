@@ -87,7 +87,7 @@ const ChartsOverviewDemo = () => {
           </Typography>
           <Typography variant="h5" component="div" style = {{fontSize:"14px"}}>
               {sensorData && sensorData.length > 0 && sensorData[0] ? 
-                  sensorData[0].alert_status : 
+                  sensorData[0].average_value: 
                     "No data to display"}
           </Typography>
         </CardContent>
