@@ -85,8 +85,10 @@ const ChartsOverviewDemo = () => {
           <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
               Current Average Value
           </Typography>
-          <Typography variant="h5" component="div">
-            {sensorData[0].average_value}
+          <Typography variant="h5" component="div" style = {{fontSize:"14px"}}>
+              {sensorData && sensorData.length > 0 && sensorData[0] ? 
+                  sensorData[0].alert_status : 
+                    "No data to display"}
           </Typography>
         </CardContent>
       </Card>
@@ -96,8 +98,10 @@ const ChartsOverviewDemo = () => {
               <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
                   Alert Status
               </Typography>
-              <Typography variant="h5" component="div">
-                  {sensorData[0].alert_status}
+              <Typography variant="h5" component="div" style = {{fontSize:"14px"}}>
+                  {sensorData && sensorData.length > 0 && sensorData[0] ? 
+                  sensorData[0].alert_status : 
+                    "No data to display"}
               </Typography>
           </CardContent>
       </Card>
