@@ -7,13 +7,31 @@ import { CardContent } from "@mui/material";
 import Typography from '@mui/material/Typography';
 import { useWebSocket } from "../WebSocketContext/Websocket";
 import "./GateDisplay.css"
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 const GateOverview = () => {
    //const [sensorData, setSensorData] = useWebSocket();
     const { sensorData, connected } = useWebSocket();
     const websocketRef = useRef(null);
     const [tableopen, settableopen] = useState(false)
-
+    function createData(name, calories, fat, carbs, protein) {
+      return { name, calories, fat, carbs, protein };
+    }
+    
+    const rows = [
+      createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+      createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+      createData('Eclair', 262, 16.0, 24, 6.0),
+      createData('Cupcake', 305, 3.7, 67, 4.3),
+      createData('Gingerbread', 356, 16.0, 49, 3.9),
+    ];
+    
   
   return (
 
@@ -59,16 +77,41 @@ const GateOverview = () => {
       {tableopen && 
       
       ( */}
+
+<TableContainer component={Paper} className="interactive-table">
+  <Table   aria-label="sensor data table">
+    <TableHead>
+      <TableRow>
+        <TableCell>Timestamp</TableCell>
+       
+        <TableCell align="right">Health Status Value</TableCell>
+        <TableCell align="right">Health Status</TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {sensorData.map((data, index) => (
+        <TableRow
+          key={index}
+          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        >
+          <TableCell>{data.timestamp}</TableCell>
+    
+          <TableCell align="right">{data.health_status_value}</TableCell>
+          <TableCell align="right">{data.health_status}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
       <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 3 }}>
-        <Gauge width={100} height={100} value={60} color="#430099" />
-        <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />
+        
         <div className="sensor-container">
           <h1>Live Sensor Data</h1>
             <div className="connection-status">
               <span className={`status-indicator ${connected ? "connected" : "disconnected"}`}></span>
               <span>{connected ? "Connected" : "Disconnected"}</span>
             </div>
-                  <table className="sensor-table">
+                  {/* <table className="sensor-table">
                     <thead>
                       <tr>
                         <th>Timestamp</th>
@@ -107,7 +150,7 @@ const GateOverview = () => {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table> */}
 
         </div>
     

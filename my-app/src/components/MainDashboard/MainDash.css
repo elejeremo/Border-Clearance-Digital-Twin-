@@ -33,12 +33,10 @@
   .info-widget {
     display: flex;
     flex-direction: column; 
-  
     padding: 1rem;
     border-radius: 8px;
-      
     gap: 20px;
-    width: 20%;
+    width: 20vw;
    
   }
   
