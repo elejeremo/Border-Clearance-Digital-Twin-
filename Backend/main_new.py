@@ -103,7 +103,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com_port = "COM5"  # Replace with your Arduino's port
+com_port = "COM7"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 # # Port to Mega for controlling of motor
@@ -330,19 +330,19 @@ async def read_sensor_data():
                     # Update previous SensorX1 value
                     prev_sensorX1 = sensor_values_float[4]
 
-                    # If any threshold is exceeded, prompt the user
-                    if threshold_exceeded:
-                        user_choice = pyautogui.confirm(
-                            text=warning_message,
-                            title="Critical Sensor Alert",
-                            buttons=["Resume", "Exit"],
-                        )
-                        if user_choice == "Exit":
-                            print("Terminating data collection...")
-                            exit_script = True
-                            break
-                        else:
-                            print("Resuming data collection...")
+                    # # If any threshold is exceeded, prompt the user
+                    # if threshold_exceeded:
+                    #     user_choice = pyautogui.confirm(
+                    #         text=warning_message,
+                    #         title="Critical Sensor Alert",
+                    #         buttons=["Resume", "Exit"],
+                    #     )
+                    #     if user_choice == "Exit":
+                    #         print("Terminating data collection...")
+                    #         exit_script = True
+                    #         break
+                    #     else:
+                    #         print("Resuming data collection...")
 
                     # Create a new DataFrame row
                     new_row = pd.DataFrame(
@@ -403,13 +403,13 @@ async def read_sensor_data():
                     else:
                         health_status = "Red"
 
-                    output_data = {
-                        "average_value": avg_value,
-                        "alert_count": alert_count,
-                        "alert_status": alert_status,
-                        "health_status_value": health_status_value,
-                        "health_status": health_status,
-                    }
+                    # output_data = {
+                    #     "average_value": avg_value,
+                    #     "alert_count": alert_count,
+                    #     "alert_status": alert_status,
+                    #     "health_status_value": health_status_value,
+                    #     "health_status": health_status,
+                    # }
 
                     # Create a sensor data dictionary
                     sensor_data = {
@@ -458,57 +458,57 @@ async def read_sensor_data():
                     await manager.broadcast(json.dumps(sensor_data))
 
                     # Save to CSV every 300 entries
-                    if data_count >= 300:
-                        today_date = datetime.now().strftime(
-                            "%Y-%m-%d_%H-%M-%S"
-                        )  # Get current date
-                        # csv_filename = os.path.join(
-                        #     desktop_path, f"sensordata_{today_date}.csv"
-                        # )
+                    # if data_count >= 300:
+                    #     today_date = datetime.now().strftime(
+                    #         "%Y-%m-%d_%H-%M-%S"
+                    #     )  # Get current date
+                    #     # csv_filename = os.path.join(
+                    #     #     desktop_path, f"sensordata_{today_date}.csv"
+                    #     # )
 
-                        # # Save to CSV
-                        # df.to_csv(csv_filename, index=False)
-                        # print(f"✅ Saved last 300 readings to {csv_filename}")
+                    #     # # Save to CSV
+                    #     # df.to_csv(csv_filename, index=False)
+                    #     # print(f"✅ Saved last 300 readings to {csv_filename}")
 
-                        # Reset DataFrame and counter
-                        df = pd.DataFrame(
-                            columns=[
-                                "Timestamp",
-                                "Sensor1",
-                                "Sensor2",
-                                "Sensor3",
-                                "Sensor4",
-                                "Force",
-                                # "SensorX2",
-                                # "SensorX3",
-                            ]
-                        )
-                        data_count = 0
+                    #     # Reset DataFrame and counter
+                    #     df = pd.DataFrame(
+                    #         columns=[
+                    #             "Timestamp",
+                    #             "Sensor1",
+                    #             "Sensor2",
+                    #             "Sensor3",
+                    #             "Sensor4",
+                    #             "Force",
+                    #             # "SensorX2",
+                    #             # "SensorX3",
+                    #         ]
+                    #     )
+                    #     data_count = 0
 
-                    # Auto-refresh data view every 5 minutes
-                    if time.time() - start_time >= 300:  # 300 seconds = 5 minutes
-                        print("\n⏳ Refreshing view (last 300 values)...")
+                    # # Auto-refresh data view every 5 minutes
+                    # if time.time() - start_time >= 300:  # 300 seconds = 5 minutes
+                    #     print("\n⏳ Refreshing view (last 300 values)...")
 
-                        # Retrieve last 300 readings
-                        # cursor.execute(
-                        #     "SELECT * FROM SensorReadings ORDER BY timestamp DESC LIMIT 300"
-                        # )
-                        # columns = [description[0] for description in cursor.description]
-                        # rows = cursor.fetchall()
+                    #     # Retrieve last 300 readings
+                    #     # cursor.execute(
+                    #     #     "SELECT * FROM SensorReadings ORDER BY timestamp DESC LIMIT 300"
+                    #     # )
+                    #     # columns = [description[0] for description in cursor.description]
+                    #     # rows = cursor.fetchall()
 
-                        result = []
-                        for row in rows:
-                            result.append(dict(zip(columns, row)))
+                    #     result = []
+                    #     for row in rows:
+                    #         result.append(dict(zip(columns, row)))
 
-                        print(f"Latest readings: {len(result)} entries")
+                    #     print(f"Latest readings: {len(result)} entries")
 
-                        # Reset the timer
-                        start_time = time.time()
+                    #     # Reset the timer
+                    #     start_time = time.time()
 
-                    # Check if 5 minutes have passed for deletion
-                    if time.time() - delete_start_time >= 300:
-                        delete_oldest_entries()
-                        delete_start_time = time.time()
+                    # # Check if 5 minutes have passed for deletion
+                    # if time.time() - delete_start_time >= 300:
+                    #     delete_oldest_entries()
+                    #     delete_start_time = time.time()
 
             # Delay between readings
             await asyncio.sleep(0.1)  # Use shorter sleep for more responsive WebSocket
