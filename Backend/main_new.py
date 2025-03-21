@@ -367,6 +367,7 @@ async def read_sensor_data():
                         new_row[["Sensor1", "Sensor2", "Sensor3", "Sensor4"]]
                         .replace(0, np.nan)
                         .mean(axis=1)
+                        .round(2)
                         .iloc[0]
                     )
                     threshold = calculate_alert_threshold(df)
