@@ -41,7 +41,6 @@ const Scene = ({ annotations, onPointClick, gates, onFirstClick, cameraControlRe
         <GatePoint
           key={index}
           {...gate}
-          //isActiveGate={activeGatePoint?.gateTitle === gate.gateTitle}
           isActiveGate={activeGatePoint === gate.gateTitle}
           onClick={() => onFirstClick(gate)}
         />

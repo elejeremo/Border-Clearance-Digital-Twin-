@@ -1,11 +1,16 @@
 import './App.css';
 import MainDash from './components/MainDashboard/MainDash';
+import { WebSocketProvider } from './components/WebSocketContext/Websocket';
 function App() {
   return (
     <div className="App">
-        <div className ="AppGlass">
-          <MainDash/>
-        </div>
+      <WebSocketProvider>
+            <div className ="AppGlass">
+                <MainDash/>
+              </div>
+
+      </WebSocketProvider>
+        
     </div>
   );
 }
