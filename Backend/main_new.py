@@ -103,7 +103,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com_port = "COM5"  # Replace with your Arduino's port
+com_port = "COM7"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 # # Port to Mega for controlling of motor
@@ -407,6 +407,8 @@ async def read_sensor_data():
                     else:
                         health_status = "Red"
 
+                    # updated_gates = await get_updated_gate_colors(health_status_value)
+
                     #updated_gates = await get_updated_gate_colors(health_status_value)
 
                     
@@ -436,7 +438,7 @@ async def read_sensor_data():
                         "force_alert_status": force_alert_status,
                         "health_status_value": health_status_value,
                         "health_status": health_status,
-                        "updated_colour": scanner_colors
+                        "updated_colour": scanner_colors,
                         #                        "sensorX2": sensor_values_float[5],
                         #                        "sensorX3": sensor_values_float[6],
                     }

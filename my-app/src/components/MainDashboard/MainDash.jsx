@@ -5,14 +5,14 @@
     import api from "../../api.js"
 
     import { WebSocketProvider } from '../WebSocketContext/Websocket';
-    import { useWebSocket } from "../WebSocketContext/Websocket";
+    //import { useWebSocket } from "../WebSocketContext/Websocket";
     
 
         const MainDash = () => {
             const [activeGate, setActiveGate] = useState(null);
             const [activeAnnotation, setActiveAnnotation] = useState(null)
             const [annotations, setAnnotations] = useState([]);
-            const { gate3sensorData, connected } = useWebSocket();
+            //const { gate3sensorData, connected } = useWebSocket();
             const componentMap = {
                 'gate3_Scanner': React.lazy(() => import('../Datadisplay/DataDisplay')),
               
@@ -85,30 +85,30 @@
             //test this new code
 
 
-            useEffect(() => {
-                if (gate3sensorData && annotations.length > 0) {
-                    // Create a new array with updated colors for gate3 annotations
-                    const updatedAnnotations = annotations.map(annotation => {
-                        if (annotation.gateId === 'gate3') {
-                            // Determine new colors based on gate3sensorData
-                            // You'll need to define your logic for color changes here
-                            // This is just an example:
+            // useEffect(() => {
+            //     if (gate3sensorData && annotations.length > 0) {
+            //         // Create a new array with updated colors for gate3 annotations
+            //         const updatedAnnotations = annotations.map(annotation => {
+            //             if (annotation.gateId === 'gate3') {
+            //                 // Determine new colors based on gate3sensorData
+            //                 // You'll need to define your logic for color changes here
+            //                 // This is just an example:
                             
-                            const [newColor1, newColor2] = gate3sensorData.updated_colour;
+            //                 const [newColor1, newColor2] = gate3sensorData.updated_colour;
                             
-                            return {
-                                ...annotation,
-                                color1: newColor1,
-                                color2: newColor2
-                            };
-                        }
-                        return annotation;
-                    });
+            //                 return {
+            //                     ...annotation,
+            //                     color1: newColor1,
+            //                     color2: newColor2
+            //                 };
+            //             }
+            //             return annotation;
+            //         });
                     
-                    // Update state with the new annotations
-                    setAnnotations(updatedAnnotations);
-                }
-            }, [gate3sensorData]);
+            //         // Update state with the new annotations
+            //         setAnnotations(updatedAnnotations);
+            //     }
+            // }, [gate3sensorData]);
 
 
 
@@ -135,7 +135,7 @@
 
             return (
 
-                // <WebSocketProvider>
+                <WebSocketProvider>
                 <div className="MainDash">
                     <div className="topbar">
                         <Cards/>
@@ -194,7 +194,7 @@
 
 
                 </div>
-                // </WebSocketProvider>
+                </WebSocketProvider>
             )
 
         }
