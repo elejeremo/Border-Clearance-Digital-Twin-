@@ -4,7 +4,7 @@
     import ThreeModel from "../Threefibermodel/ThreeModel";
     import api from "../../api.js"
 
-    // import { WebSocketProvider } from '../WebSocketContext/Websocket';
+    import { WebSocketProvider } from '../WebSocketContext/Websocket';
     import { useWebSocket } from "../WebSocketContext/Websocket";
     
 

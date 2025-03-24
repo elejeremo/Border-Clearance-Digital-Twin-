@@ -407,7 +407,7 @@ async def read_sensor_data():
                     else:
                         health_status = "Red"
 
-                    updated_gates = await get_updated_gate_colors(health_status_value)
+                    #updated_gates = await get_updated_gate_colors(health_status_value)
 
                     
                         
