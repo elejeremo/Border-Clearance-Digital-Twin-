@@ -85,32 +85,9 @@
             //test this new code
 
 
-            // useEffect(() => {
-            //     if (gate3sensorData && annotations.length > 0) {
-            //         // Create a new array with updated colors for gate3 annotations
-            //         const updatedAnnotations = annotations.map(annotation => {
-            //             if (annotation.gateId === 'gate3') {
-            //                 // Determine new colors based on gate3sensorData
-            //                 // You'll need to define your logic for color changes here
-            //                 // This is just an example:
-                            
-            //                 const [newColor1, newColor2] = gate3sensorData.updated_colour;
-                            
-            //                 return {
-            //                     ...annotation,
-            //                     color1: newColor1,
-            //                     color2: newColor2
-            //                 };
-            //             }
-            //             return annotation;
-            //         });
-                    
-            //         // Update state with the new annotations
-            //         setAnnotations(updatedAnnotations);
-            //     }
-            // }, [gate3sensorData]);
+           
 
-
+            
 
             
             

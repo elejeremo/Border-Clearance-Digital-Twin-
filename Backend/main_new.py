@@ -103,7 +103,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com_port = "COM7"  # Replace with your Arduino's port
+com_port = "COM5"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 # # Port to Mega for controlling of motor
