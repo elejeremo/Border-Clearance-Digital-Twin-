@@ -372,6 +372,8 @@ async def read_sensor_data():
                     )
                     threshold = calculate_alert_threshold(df)
 
+                    is_critical_alert = avg_value > 1.3
+
                     if avg_value > threshold:
                         alert_count += 1
 
@@ -409,11 +411,8 @@ async def read_sensor_data():
 
                     # updated_gates = await get_updated_gate_colors(health_status_value)
 
-                    #updated_gates = await get_updated_gate_colors(health_status_value)
+                    # updated_gates = await get_updated_gate_colors(health_status_value)
 
-                    
-                        
-    
                     # output_data = {
                     #     "average_value": avg_value,
                     #     "alert_count": alert_count,
@@ -439,6 +438,11 @@ async def read_sensor_data():
                         "health_status_value": health_status_value,
                         "health_status": health_status,
                         "updated_colour": scanner_colors,
+                        "is_critical_alert": is_critical_alert,
+                        "critical_alert_details": {
+                            "threshold": 1.3,
+                            "current_value": avg_value,
+                        },
                         #                        "sensorX2": sensor_values_float[5],
                         #                        "sensorX3": sensor_values_float[6],
                     }
