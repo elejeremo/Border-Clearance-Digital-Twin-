@@ -1,11 +1,33 @@
 import React, { useState } from 'react';
 import { Html } from '@react-three/drei';
 import "./AnnotationPoint.css"
-import DataCards from '../DataCards/DataCards';
+import { useWebSocket } from "../WebSocketContext/Websocket";
 
-const AnnotationPoint = ({ position, title, onClick, isActive, color1, color2, content }) => {
+
+const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, color2, content }) => {
   const [shiny, setShiny] = useState(false);
-
+  const { sensorData, connected } = useWebSocket();
+  const dynamicColor = useMemo(() => {
+    // Check specifically for gate3
+    if (sensorData && gateId === "gate3") {
+      // Extract scanner colors from the sensor data for gate3
+      const scannerColors = sensorData["gate3"]?.scanner_colors;
+  
+      // Check if scanner colors exist
+      if (scannerColors) {
+        // Convert hex number colors to CSS color strings
+        const color1 = `#${scannerColors[0].toString(16).padStart(6, '0')}`;
+        const color2 = `#${scannerColors[1].toString(16).padStart(6, '0')}`;
+  
+        // Return color based on shiny state
+        return shiny ? color1 : color2;
+      }
+    }
+  
+    // If no websocket data is available for gate3, fall back to original colors
+    return shiny ? color1 : color2;
+  }, [sensorData, connected, gateId, shiny, color1, color2]);
+    
   return (
     <>
       <mesh
