@@ -8,7 +8,8 @@ const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, c
   const [shiny, setShiny] = useState(false);
   const { sensorData, connected } = useWebSocket();
   const dynamicColor = useMemo(() => {
-    // Check specifically for gate3
+    
+    // Check specifically for gate3 (cos the websocket is connected to gate3)
     if (sensorData && gateId === "gate3") {
       // Extract scanner colors from the sensor data for gate3
       const scannerColors = sensorData["gate3"]?.scanner_colors;
@@ -38,7 +39,8 @@ const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, c
         renderOrder={1}
       >
         <sphereGeometry args={[0.1, 16, 16]} />
-        <meshBasicMaterial color={shiny ? color1 : color2} depthTest={false} />
+        {/* <meshBasicMaterial color={shiny ? color1 : color2} depthTest={false} /> */}
+        <meshBasicMaterial color={dynamicColor} depthTest={false} />
       </mesh>
       
       {isActive && (
