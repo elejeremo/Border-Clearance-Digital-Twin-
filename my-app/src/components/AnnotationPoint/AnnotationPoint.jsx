@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Html } from '@react-three/drei';
 import "./AnnotationPoint.css"
 import { useWebSocket } from "../WebSocketContext/Websocket";
@@ -6,27 +6,35 @@ import { useWebSocket } from "../WebSocketContext/Websocket";
 const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, color2, content }) => {
   const [shiny, setShiny] = useState(false);
   const { sensorData, connected } = useWebSocket();
-  const [currentColors, setCurrentColors] = useState({ 
-    color1: `#${color1.toString(16).padStart(6, '0')}`, 
-    color2: `#${color2.toString(16).padStart(6, '0')}` 
-  });
+  const [currentColors, setCurrentColors] = useState({ color1, color2 });
 
-  // Convert numeric color to hex string
-  const convertColorToHex = (colorNumber) => {
-    return `#${colorNumber.toString(16).padStart(6, '0')}`;
-  };
+  // Debug effect to log WebSocket data changes
+  useEffect(() => {
+    console.log("WebSocket Connection Status:", connected);
+    console.log("Full Sensor Data:", sensorData);
+    
+    // Check for gate3 specific data
+    if (connected && sensorData && sensorData["gate3"]) {
+      console.log("Gate3 Sensor Data:", sensorData["gate3"]);
+      
+      // Log the updated color
+      if (sensorData.updated_colour) {
+        console.log("Updated Colour for Gate3:", sensorData["gate3"].updated_colour);
+      }
+    }
+  }, [sensorData, connected]);
 
-  // Effect to update colors when WebSocket data changes
+  // Dynamic color logic based on WebSocket data
   useEffect(() => {
     // Check specifically for gate3 and ensure connected and data exists
     if (connected && sensorData && gateId === "gate3") {
       // Extract updated color from sensor data
-      const updatedColor = sensorData["gate3"]?.updated_colour;
+      const updatedColor = sensorData.updated_colour;
 
       // If updated color exists, convert to CSS color
-      if (updatedColor && Array.isArray(updatedColor) && updatedColor.length === 2) {
-        const newColor1 = convertColorToHex(updatedColor[0]);
-        const newColor2 = convertColorToHex(updatedColor[1]);
+      if (updatedColor) {
+        const newColor1 = `#${updatedColor[0].toString(16).padStart(6, '0')}`;
+        const newColor2 = `#${updatedColor[1].toString(16).padStart(6, '0')}`;
 
         console.log("Updating colors:", { newColor1, newColor2 });
         setCurrentColors({ color1: newColor1, color2: newColor2 });
