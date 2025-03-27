@@ -17,31 +17,28 @@ const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, c
     if (connected && sensorData && sensorData["gate3"]) {
       console.log("Gate3 Sensor Data:", sensorData["gate3"]);
       
-      // Log the updated color
+      // Log the updated color only when the updated colour changes
       if (sensorData.updated_colour) {
-        console.log("Updated Colour for Gate3:", sensorData["gate3"].updated_colour);
+        console.log("Updated Colour for Gate3:", sensorData.updated_colour);
       }
     }
-  }, [sensorData, connected]);
+  }, [sensorData?.updated_colour, connected]);
 
   // Dynamic color logic based on WebSocket data
   useEffect(() => {
-    // Check specifically for gate3 and ensure connected and data exists
     if (connected && sensorData && gateId === "gate3") {
-      // Extract updated color from sensor data
       const updatedColor = sensorData.updated_colour;
-
-      // If updated color exists, convert to CSS color
+      
       if (updatedColor) {
-        const newColor1 = `#${updatedColor[0].toString(16).padStart(6, '0')}`;
-        const newColor2 = `#${updatedColor[1].toString(16).padStart(6, '0')}`;
-
-        console.log("Updating colors:", { newColor1, newColor2 });
-        setCurrentColors({ color1: newColor1, color2: newColor2 });
+        console.log('Updated Colors:', updatedColor);
+        setCurrentColors({ 
+          color1: updatedColor[0], 
+          color2: updatedColor[1] 
+        });
       }
     }
-  }, [sensorData, connected, gateId]);
-   
+  }, [sensorData?.updated_colour, connected]);
+
   return (
     <>
       <mesh
