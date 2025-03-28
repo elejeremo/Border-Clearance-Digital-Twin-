@@ -24,6 +24,7 @@ const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, c
       }
     }
   }, [sensorData?.[0]?.updated_colour, connected]);
+  
 
 // add more gate websockets here //
 

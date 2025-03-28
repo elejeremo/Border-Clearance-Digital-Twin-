@@ -98,10 +98,7 @@
             </Button>
           </Tooltip>
           
-           {/* Explicit alert rendering with multiple checks */}
-           {/* {sensorData?.[0]?.is_critical_alert && isAlertOpen && (
-              <AlertWidget onClick={toggleAlert} />
-            )} */}
+        
             
     {/* Explicit alert rendering: Once opened, it stays open until manually closed */}
     {(wasCriticalAlert && isAlertOpen) && (

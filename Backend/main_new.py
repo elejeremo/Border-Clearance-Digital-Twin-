@@ -32,7 +32,7 @@ GATE_COLLECTION = "gates"
 ANNOTATION_COLLECTION = "annotations"
 
 
-def get_health_colors(health_value: str):
+def get_initial_health_colors(health_value: str):
     """
     Convert health percentage to color values.
     Returns (color1, color2) tuple with hex color values.
@@ -415,7 +415,7 @@ class AnnotationPoint(
 
     def __init__(self, **data):  # proccess the colour of the points
         if "content" in data and "Health" in data["content"]:
-            color1, color2 = get_health_colors(data["content"]["Health"])
+            color1, color2 = get_initial_health_colors(data["content"]["Health"])
             if "Rendering" not in data:
                 data["Rendering"] = {}
             data["Rendering"]["color1"] = color1
@@ -544,7 +544,7 @@ async def update_annotation(
         point_to_update["content"]["Health"] = update_request.health
 
         # Recalculate the color based on the new health value
-        color1, color2 = get_health_colors(update_request.health)
+        color1, color2 = get_initial_health_colors(update_request.health)
         point_to_update["Rendering"]["color1"] = color1
         point_to_update["Rendering"]["color2"] = color2
 
