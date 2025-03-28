@@ -20,7 +20,7 @@ MONGODB_URL = "mongodb://localhost:27017"
 DB_NAME = "Digitaltwin"
 GATE_COLLECTION = "gates"
 ANNOTATION_COLLECTION = "annotations"
-COM_PORT = "COM7"
+COM_PORT = "COM5"
 BAUD_RATE = 9600
 
 # Global state dictionary to be used across functions

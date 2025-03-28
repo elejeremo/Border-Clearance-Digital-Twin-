@@ -80,14 +80,7 @@
                 fetchAnnotationPointData();
             }, []);
 
-            //test this new code
-
-
-           
-
-            
-
-
+          
             
             const getComponentForAnnotation = (annotation) => {
                 // You could have more complex logic here
