@@ -7,11 +7,14 @@ import { CardContent } from "@mui/material";
 import Typography from '@mui/material/Typography';
 import "./DataDisplay.css"
 import { useWebSocket } from "../WebSocketContext/Websocket";
+import AlertWidget from "../Alert/Alert";
+import Button from '@mui/material/Button';
+
 
 const ChartsOverviewDemo = () => {
   //const [sensorData, setSensorData] = useWebSocket();
   const { sensorData, connected } = useWebSocket();
-  
+  const [open, setOpen] = useState(false);
  //const [connected, setConnected] = useState(false);
   const websocketRef = useRef(null);
 
@@ -21,6 +24,7 @@ const ChartsOverviewDemo = () => {
   //   //   console.log("Connected to WebSocket");
   //   //   setConnected(true);
   //   // };
+
 
   //   websocketRef.current.onmessage = (event) => {
   //     try {
@@ -38,6 +42,9 @@ const ChartsOverviewDemo = () => {
   return (
 
     <div className="card_formatting">
+
+    
+      
       <Card style= {{borderRadius:'10px',backgroundColor:"#fdf9f9"}}>
         <CardContent>
             <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>

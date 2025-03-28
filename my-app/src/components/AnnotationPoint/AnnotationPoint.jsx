@@ -15,7 +15,7 @@ const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, c
     
     // Check for gate3 specific data
     if (connected && sensorData && sensorData["gate3"]) {
-      console.log("Gate3 Sensor Data:", sensorData["gate3"]);
+      console.log("Gate3 Sensor Data:", sensorData);
       
       // Log the updated color only when the updated colour changes
       if (sensorData.updated_colour) {

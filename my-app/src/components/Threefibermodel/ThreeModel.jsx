@@ -5,16 +5,24 @@ import Tooltip from '@mui/material/Tooltip';
 import "./ThreeModel.css"
 import api from "../../api.js"
 import Button from '@mui/material/Button';
-
-
+import AlertWidget from "../Alert/Alert.jsx";
+import { useWebSocket } from "../WebSocketContext/Websocket";
 
 
 const ThreeModel = ({onGateSelect, onAnnotationSelect, annotations, gates, fetchAnnotationPointData}) => {
   const cameraControlRef = useRef();
   const [activePoint, setActivePoint] = useState(null);
   const [activeGatePoint, setActiveGatePoint] = useState(null);
+  const {sensorData, connected } = useWebSocket();
+  const [open, setOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+ 
+  const toggleAlert = () => {
+    setIsAlertOpen(prev => !prev);
+  };
+  
 
-
+  
   const handleSecondlevelzoom = (annotation) => {
     const { cameraView } = annotation;
     cameraControlRef.current.moveTo(cameraView.position[0], cameraView.position[1], cameraView.position[2], true);
@@ -76,6 +84,22 @@ const ThreeModel = ({onGateSelect, onAnnotationSelect, annotations, gates, fetch
             Refresh Data
           </Button>
         </Tooltip>
+
+         <>
+         
+         {sensorData.is_critical_alert && (
+          <AlertWidget
+            open={isAlertOpen}
+            onClick={toggleAlert}
+          />
+        )}
+        
+        </> 
+              <Button
+              onClick = {toggleAlert}>
+        
+                tEST
+              </Button>
       </div>
     </div>
   );
