@@ -106,44 +106,11 @@ manager = ConnectionManager()
 com_port = "COM5"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
-# # Port to Mega for controlling of motor
-# drive_port = "COM9"
-# drive_baud_rate = 115200
-
-# # Open serial connection for motor control
-# drive_ser = serial.Serial(drive_port, drive_baud_rate, timeout=1)
 
 # Get the current timestamp for the filename
 timestamp_str = time.strftime("%Y-%m-%d_%H-%M-%S")
 
-# Get the Desktop path dynamically
-# desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-# os.chdir(desktop_path)
-# db_name = "sensor_data.db"
-# db_path = os.path.join(desktop_path, db_name)  # Get absolute path
-# print(f"Database is saved at: {db_path}")
 
-# Create a connection to SQLite database
-# conn = sqlite3.connect(db_name)
-# cursor = conn.cursor()
-
-# # Create table if it doesn't exist
-# cursor.execute("""
-# CREATE TABLE IF NOT EXISTS SensorReadings (
-#     id INTEGER PRIMARY KEY AUTOINCREMENT,
-#     timestamp TEXT,
-#     sensor1 REAL,
-#     sensor2 REAL,
-#     sensor3 REAL,
-#     sensor4 REAL,
-#     sensorX1 REAL,
-#     sensorX2 REAL,
-#     sensorX3 REAL
-# )
-# """)
-# conn.commit()
-
-# print(f"Data will be stored in: {db_name}")
 
 # # Initialize an empty DataFrame
 df = pd.DataFrame(
@@ -210,21 +177,6 @@ def exit_handler():
 keyboard.add_hotkey("ctrl+e", exit_handler)
 
 
-# def delete_oldest_entries():
-#     try:
-#         cursor.execute("""
-#             DELETE FROM SensorReadings
-#             WHERE id IN (
-#                 SELECT id FROM SensorReadings
-#                 ORDER BY timestamp ASC
-#                 LIMIT 300
-#             )
-#         """)
-#         conn.commit()
-#         print("🗑️ Deleted the oldest 300 entries from the database.")
-#     except Exception as e:
-#         print(f"Error during deletion: {e}")
-
 
 # WebSocket endpoint for clients to connect
 @app.websocket("/ws")
@@ -238,24 +190,6 @@ async def websocket_endpoint(websocket: WebSocket):
         manager.disconnect(websocket)
 
 
-# API endpoint to get the latest 300 readings
-# @app.get("/latest-readings")
-# async def get_latest_readings():
-#     cursor.execute("SELECT * FROM SensorReadings ORDER BY timestamp DESC LIMIT 300")
-#     columns = [description[0] for description in cursor.description]
-#     rows = cursor.fetchall()
-
-#     result = []
-#     for row in rows:
-#         result.append(dict(zip(columns, row)))
-
-#     return result
-
-
-# async def control_motor(command):
-#     if drive_ser.is_open:
-#         drive_ser.write(command.encode())
-#         print(f"Command '{command}' sent to motor.")
 
 
 # Function to read sensor data and broadcast via WebSocket
@@ -330,19 +264,7 @@ async def read_sensor_data():
                     # Update previous SensorX1 value
                     prev_sensorX1 = sensor_values_float[4]
 
-                    # # If any threshold is exceeded, prompt the user
-                    # if threshold_exceeded:
-                    #     user_choice = pyautogui.confirm(
-                    #         text=warning_message,
-                    #         title="Critical Sensor Alert",
-                    #         buttons=["Resume", "Exit"],
-                    #     )
-                    #     if user_choice == "Exit":
-                    #         print("Terminating data collection...")
-                    #         exit_script = True
-                    #         break
-                    #     else:
-                    #         print("Resuming data collection...")
+                   
 
                     # Create a new DataFrame row
                     new_row = pd.DataFrame(
@@ -409,17 +331,7 @@ async def read_sensor_data():
                     else:
                         health_status = "Red"
 
-                    # updated_gates = await get_updated_gate_colors(health_status_value)
-
-                    # updated_gates = await get_updated_gate_colors(health_status_value)
-
-                    # output_data = {
-                    #     "average_value": avg_value,
-                    #     "alert_count": alert_count,
-                    #     "alert_status": alert_status,
-                    #     "health_status_value": health_status_value,
-                    #     "health_status": health_status,
-                    # }
+                    
 
                     # Create a sensor data dictionary
                     sensor_data = {
@@ -439,32 +351,9 @@ async def read_sensor_data():
                         "health_status": health_status,
                         "updated_colour": scanner_colors,
                         "is_critical_alert": bool(is_critical_alert),
-                        # "critical_alert_details": {
-                        #     "threshold": 1.3,
-                        #     "current_value": avg_value,
-                        # },
-                        #                        "sensorX2": sensor_values_float[5],
-                        #                        "sensorX3": sensor_values_float[6],
+                       
                     }
-                    # # Insert data into SQL database
-                    # cursor.execute(
-                    #     """
-                    #     INSERT INTO SensorReadings (timestamp, sensor1, sensor2, sensor3, sensor4, sensorX1, sensorX2, sensorX3)
-                    #     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                    # """,
-                    #     (
-                    #         current_time,
-                    #         sensor_values_float[0],
-                    #         sensor_values_float[1],
-                    #         sensor_values_float[2],
-                    #         sensor_values_float[3],
-                    #         sensor_values_float[4],
-                    #         sensor_values_float[5],
-                    #         sensor_values_float[6],
-                    #     ),
-                    # )
-                    # conn.commit()
-
+                  
                     # Print data readings
                     print(
                         f"[{current_time}] SensorValues: {sensor_values_float[0], sensor_values_float[1], sensor_values_float[2], sensor_values_float[3], diff_sensorX1}"
@@ -472,59 +361,6 @@ async def read_sensor_data():
 
                     # Broadcast sensor data via WebSocket
                     await manager.broadcast(json.dumps(sensor_data))
-
-                    # Save to CSV every 300 entries
-                    # if data_count >= 300:
-                    #     today_date = datetime.now().strftime(
-                    #         "%Y-%m-%d_%H-%M-%S"
-                    #     )  # Get current date
-                    #     # csv_filename = os.path.join(
-                    #     #     desktop_path, f"sensordata_{today_date}.csv"
-                    #     # )
-
-                    #     # # Save to CSV
-                    #     # df.to_csv(csv_filename, index=False)
-                    #     # print(f"✅ Saved last 300 readings to {csv_filename}")
-
-                    #     # Reset DataFrame and counter
-                    #     df = pd.DataFrame(
-                    #         columns=[
-                    #             "Timestamp",
-                    #             "Sensor1",
-                    #             "Sensor2",
-                    #             "Sensor3",
-                    #             "Sensor4",
-                    #             "Force",
-                    #             # "SensorX2",
-                    #             # "SensorX3",
-                    #         ]
-                    #     )
-                    #     data_count = 0
-
-                    # # Auto-refresh data view every 5 minutes
-                    # if time.time() - start_time >= 300:  # 300 seconds = 5 minutes
-                    #     print("\n⏳ Refreshing view (last 300 values)...")
-
-                    #     # Retrieve last 300 readings
-                    #     # cursor.execute(
-                    #     #     "SELECT * FROM SensorReadings ORDER BY timestamp DESC LIMIT 300"
-                    #     # )
-                    #     # columns = [description[0] for description in cursor.description]
-                    #     # rows = cursor.fetchall()
-
-                    #     result = []
-                    #     for row in rows:
-                    #         result.append(dict(zip(columns, row)))
-
-                    #     print(f"Latest readings: {len(result)} entries")
-
-                    #     # Reset the timer
-                    #     start_time = time.time()
-
-                    # # Check if 5 minutes have passed for deletion
-                    # if time.time() - delete_start_time >= 300:
-                    #     delete_oldest_entries()
-                    #     delete_start_time = time.time()
 
             # Delay between readings
             await asyncio.sleep(0.1)  # Use shorter sleep for more responsive WebSocket
@@ -630,17 +466,6 @@ async def get_annotation_data():
     except Exception as e:
         print(f"Error in annotation data: {str(e)}")
         return {"error": str(e)}
-
-
-# GET gate data
-# @app.get("/api/gatedata")
-# async def get_all_data():
-#     try:
-#         # Validate data using the Point model instead of Gates
-#         validated_points = [GatePoint(**point) for point in gate_points]
-#         return {"gate_points": gate_points}
-#     except Exception as e:
-#         return {"error": str(e)}
 
 
 @app.on_event("startup")

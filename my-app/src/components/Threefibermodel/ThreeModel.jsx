@@ -108,20 +108,7 @@
       <AlertWidget onClick={toggleAlert} />
     )}
 
-        {/* Force show alert for debugging */}
-        <Button 
-          variant="contained" 
-          color="secondary" 
-          onClick={() => setIsAlertOpen(true)}
-        >
-          Force Show Alert
-        </Button>
-
-        {/* Debug Information */}
-        <div style={{color: 'red', marginTop: '10px'}}>
-          <p>Is Critical Alert: {sensorData.is_critical_alert? 'TRUE' : 'FALSE'}</p>
-          <p>Is Alert Open: {isAlertOpen ? 'TRUE' : 'FALSE'}</p>
-        </div>
+  
         </div>
       </div>
     );

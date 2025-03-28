@@ -8,25 +8,11 @@ const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, c
   const { sensorData, connected } = useWebSocket();
   const [currentColors, setCurrentColors] = useState({ color1, color2 });
 
-  // Debug effect to log WebSocket data changes
-  useEffect(() => {
-    console.log("WebSocket Connection Status:", connected);
-    console.log("Full Sensor Data:", sensorData);
-    
-    // Check for gate3 specific data
-    if (connected && sensorData && sensorData) {
-      console.log("Gate3 Sensor Data:", sensorData);
-      
-      // Log the updated color only when the updated colour changes
-      if (sensorData.updated_colour) {
-        console.log("Updated Colour for Gate3:", sensorData.updated_colour);
-      }
-    }
-  }, [sensorData, connected]);
 
-  // Dynamic color logic based on WebSocket data
+
+  // Dynamic color update based on WebSocket data for gate 3
   useEffect(() => {
-    if (connected && sensorData && gateId === "gate3") {
+    if (connected && sensorData && gateId === "gate3" && title === "Scanner") {
       const updatedColor = sensorData?.[0]?.updated_colour;
       
       if (updatedColor) {
@@ -38,6 +24,10 @@ const AnnotationPoint = ({ position, title, gateId, onClick, isActive, color1, c
       }
     }
   }, [sensorData?.[0]?.updated_colour, connected]);
+
+// add more gate websockets here //
+
+
 
   return (
     <>
