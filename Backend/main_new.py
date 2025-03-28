@@ -1,29 +1,21 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from typing import Dict, Any, List
 import uvicorn
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 import numpy as np
-
-# pip install fastapi uvicorn websockets pyautogui keyboard pandas pyserial
-#
 import serial
 import os
 import time
-import sqlite3
-import pyautogui
 import pandas as pd
 from datetime import datetime
 import signal
 import keyboard
 import asyncio
 import json
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
-from typing import List
+
 
 # MongoDB connection settings
 MONGODB_URL = "mongodb://localhost:27017"
@@ -103,13 +95,12 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com_port = "COM5"  # Replace with your Arduino's port
+com_port = "COM7"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 
 # Get the current timestamp for the filename
 timestamp_str = time.strftime("%Y-%m-%d_%H-%M-%S")
-
 
 
 # # Initialize an empty DataFrame
@@ -177,7 +168,6 @@ def exit_handler():
 keyboard.add_hotkey("ctrl+e", exit_handler)
 
 
-
 # WebSocket endpoint for clients to connect
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -188,8 +178,6 @@ async def websocket_endpoint(websocket: WebSocket):
             await asyncio.sleep(1)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-
-
 
 
 # Function to read sensor data and broadcast via WebSocket
@@ -264,8 +252,6 @@ async def read_sensor_data():
                     # Update previous SensorX1 value
                     prev_sensorX1 = sensor_values_float[4]
 
-                   
-
                     # Create a new DataFrame row
                     new_row = pd.DataFrame(
                         [
@@ -331,8 +317,6 @@ async def read_sensor_data():
                     else:
                         health_status = "Red"
 
-                    
-
                     # Create a sensor data dictionary
                     sensor_data = {
                         "timestamp": current_time,
@@ -351,9 +335,8 @@ async def read_sensor_data():
                         "health_status": health_status,
                         "updated_colour": scanner_colors,
                         "is_critical_alert": bool(is_critical_alert),
-                       
                     }
-                  
+
                     # Print data readings
                     print(
                         f"[{current_time}] SensorValues: {sensor_values_float[0], sensor_values_float[1], sensor_values_float[2], sensor_values_float[3], diff_sensorX1}"
