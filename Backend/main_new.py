@@ -95,7 +95,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com_port = "COM7"  # Replace with your Arduino's port
+com_port = "COM5"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 
@@ -312,10 +312,14 @@ async def read_sensor_data():
                     health_status_value = 100 - alert_value - force_alert_value
                     if health_status_value >= 80:
                         health_status = "Green"
+                        gate_colors = (0xCDD839, 0xA2AD14)
                     elif 50 <= health_status_value < 80:
                         health_status = "Yellow"
+                        gate_colors = (0xFFD066, 0xFFBB22) 
                     else:
                         health_status = "Red"
+                        gate_colors = (0xFF8888, 0xFF0000)
+
 
                     # Create a sensor data dictionary
                     sensor_data = {
@@ -333,7 +337,8 @@ async def read_sensor_data():
                         "force_alert_status": force_alert_status,
                         "health_status_value": health_status_value,
                         "health_status": health_status,
-                        "updated_colour": scanner_colors,
+                        "updated_annotation_colour": scanner_colors,
+                        "updated_gate_colour":gate_colors,
                         "is_critical_alert": bool(is_critical_alert),
                     }
 
