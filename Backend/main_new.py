@@ -95,7 +95,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com_port = "COM5"  # Replace with your Arduino's port
+com_port = "COM7"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 
@@ -340,7 +340,7 @@ async def read_sensor_data():
                         "updated_annotation_colour": scanner_colors,
                         "updated_gate_colour": gate_colors,
                         "is_critical_alert": bool(is_critical_alert),
-                      #  "colour_counts":colour
+                        #  "colour_counts":colour
                     }
 
                     # Print data readings
@@ -418,8 +418,6 @@ class GatePoint(BaseModel):  # Changed from Gate to Point to match your data str
     color1: int
     color2: int
     cameraView: CameraView
-
-    
 
 
 class UpdateHealthRequest(BaseModel):

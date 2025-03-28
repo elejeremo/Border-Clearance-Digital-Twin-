@@ -107,7 +107,7 @@ def create_sensor_data_dict(current_time, sensor_values_float, df, alert_count):
     )
 
     threshold = calculate_alert_threshold(df)
-    is_critical_alert = avg_value > 1.2
+    is_critical_alert = avg_value > 1.1
 
     alert_value, alert_status, scanner_colors = classify_alerts(alert_count)
 
@@ -230,7 +230,7 @@ async def read_sensor_data(globals_dict, ser3, manager):
                     print(f"[{current_time}] SensorValues: {sensor_values_float[:4]}")
                     await manager.broadcast(json.dumps(sensor_data))
 
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.01)
 
     except Exception as e:
         print(f"Error in sensor reading: {e}")
