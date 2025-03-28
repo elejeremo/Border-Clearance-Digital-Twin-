@@ -281,7 +281,7 @@ async def read_sensor_data():
                     )
                     threshold = calculate_alert_threshold(df)
 
-                    is_critical_alert = avg_value > 1.3
+                    is_critical_alert = avg_value > 1.1
 
                     if avg_value > threshold:
                         alert_count += 1

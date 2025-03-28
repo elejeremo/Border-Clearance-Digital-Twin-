@@ -5,8 +5,6 @@
     import api from "../../api.js"
 
     import { WebSocketProvider } from '../WebSocketContext/Websocket';
-    //import { useWebSocket } from "../WebSocketContext/Websocket";
-    
 
         const MainDash = () => {
             const [activeGate, setActiveGate] = useState(null);
@@ -89,7 +87,7 @@
 
             
 
-            
+
             
             const getComponentForAnnotation = (annotation) => {
                 // You could have more complex logic here
