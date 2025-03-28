@@ -124,46 +124,7 @@ const ChartsOverviewDemo = () => {
               <span className={`status-indicator ${connected ? "connected" : "disconnected"}`}></span>
               <span>{connected ? "Connected" : "Disconnected"}</span>
             </div>
-          <table className="sensor-table">
-            <thead>
-              <tr>
-                <th>Timestamp</th>
-                <th>Sensor 1</th>
-                <th>Sensor 2</th>
-                <th>Sensor 3</th>
-                <th>Sensor 4</th>
-                <th>Force accelerotmeter</th>
-                <th>average value</th>
-                <th>Health</th>
-                <th>average_value</th>
-                <th>alert_count</th>
-                <th>alert_status</th>
-                <th>health_status_value</th>
-                <th>health_status</th>
-              </tr>
-            </thead>
-        <tbody>
-          {sensorData.map((data, index) => (
-            <tr key={index}>
-              <td>{data.timestamp}</td>
-              <td>{data.sensor1}</td>
-              <td>{data.sensor2}</td>
-              <td>{data.sensor3}</td>
-              <td>{data.sensor4}</td>
-              <td>{data.Force}</td>
-              <td>{data.average_value}</td>
-              <td>{data.alert_count}</td>
-              <td>{data.alert_status}</td>
-              <td>{data.force_alert_value}</td>
-              <td>{data.force_alert_count}</td>
-              <td>{data.force_alert_status}</td>
-              <td>{data.health_status_value}</td>
-              <td>{data.health_status}</td>
-         
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          
     </div>
     
       </Stack>

@@ -11,6 +11,7 @@ const Cards = () => {
         console.log(`[Debug] ${message}:`, data);
     };
     const targetColors = [16711680, 16756258, 10651156];
+    
     const colorMap = {
         
         16711680: { title: 'Number of Red/month', colour: '#FF6961' },

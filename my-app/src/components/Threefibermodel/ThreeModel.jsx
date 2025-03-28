@@ -22,15 +22,16 @@
     useEffect(() => {
       if (sensorData?.[0]?.is_critical_alert) {
         setIsAlertOpen(true);
+        setWasCriticalAlert(true);
       }
     }, [sensorData?.[0]?.is_critical_alert]); // Depend on sensorData to re-run the effect when it changes
     
-    useEffect(() => {
-      if (sensorData?.[0]?.is_critical_alert) {
-        setIsAlertOpen(true);
-        setWasCriticalAlert(true); // Remember that a critical alert was triggered
-      }
-    }, [sensorData]); // Only re-run when sensorData updates
+    // useEffect(() => {
+    //   if (sensorData?.[0]?.is_critical_alert) {
+    //     setIsAlertOpen(true);
+    //     setWasCriticalAlert(true); // Remember that a critical alert was triggered
+    //   }
+    // }, [sensorData]); // Only re-run when sensorData updates
     
     // Toggle alert only when user explicitly wants to close it
     const toggleAlert = () => {
@@ -70,6 +71,8 @@
             activeGatePoint={activeGatePoint}
           />
         </Canvas>
+
+        
         <div className="reset-buttons">
           <Tooltip title="ResetView">
             <Button
@@ -98,12 +101,10 @@
             </Button>
           </Tooltip>
           
-        
-            
-    {/* Explicit alert rendering: Once opened, it stays open until manually closed */}
-    {(wasCriticalAlert && isAlertOpen) && (
-      <AlertWidget onClick={toggleAlert} />
-    )}
+            {/* Explicit alert rendering: Once opened, it stays open until manually closed */}
+            {(wasCriticalAlert && isAlertOpen) && (
+              <AlertWidget onClick={toggleAlert} />
+            )}
 
   
         </div>

@@ -95,7 +95,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com_port = "COM7"  # Replace with your Arduino's port
+com_port = "COM5"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 
@@ -121,6 +121,7 @@ force_alert_count = 0  # alert tracking force from accelerometer
 data_count = 0  # Counter for saving every 300 entries
 start_time = time.time()  # Timer for auto-refresh
 delete_start_time = time.time()
+colours_array = []
 
 
 def calculate_alert_threshold(df):
@@ -339,6 +340,7 @@ async def read_sensor_data():
                         "updated_annotation_colour": scanner_colors,
                         "updated_gate_colour": gate_colors,
                         "is_critical_alert": bool(is_critical_alert),
+                      #  "colour_counts":colour
                     }
 
                     # Print data readings
