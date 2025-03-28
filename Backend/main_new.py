@@ -95,7 +95,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # Set up the serial connection (adjust COM port and baud rate as per your setup)
-com_port = "COM5"  # Replace with your Arduino's port
+com_port = "COM7"  # Replace with your Arduino's port
 baud_rate_com = 9600  # Match this with your Arduino's baud rate
 
 
@@ -111,7 +111,7 @@ df = pd.DataFrame(
         "Sensor2",
         "Sensor3",
         "Sensor4",
-        "Force",
+        # "Force",
         #        "SensorX2",
         #        "SensorX3",
     ]
@@ -140,8 +140,8 @@ def calculate_alert_threshold(df):
 paused = False
 critical_stop = False  # If a critical stop occurs, prevent auto-resume
 exit_script = False  # Flag to indicate when to exit the script
-prev_sensorX1 = 0
-diff_sensorX1 = 0
+# prev_sensorX1 = 0
+# diff_sensorX1 = 0
 
 
 def signal_handler(sig, frame):
@@ -228,29 +228,29 @@ async def read_sensor_data():
                         for x in sensor_values
                     ]
 
-                    # Check if any of the first four sensor values exceed 5
-                    threshold_exceeded = False
-                    for i in range(4):
-                        if sensor_values_float[i] > 5:
-                            warning_message = (
-                                f"⚠️ WARNING: Sensor{i + 1} value {sensor_values_float[i]} "
-                                f"exceeded 5.0!\nTimestamp: {current_time}\nChoose an option:"
-                            )
-                            threshold_exceeded = True
-                            break  # Exit loop if any sensor exceeds the threshold
+                    # # Check if any of the first four sensor values exceed 5
+                    # threshold_exceeded = False
+                    # for i in range(4):
+                    #     if sensor_values_float[i] > 5:
+                    #         warning_message = (
+                    #             f"⚠️ WARNING: Sensor{i + 1} value {sensor_values_float[i]} "
+                    #             f"exceeded 5.0!\nTimestamp: {current_time}\nChoose an option:"
+                    #         )
+                    #         threshold_exceeded = True
+                    #         break  # Exit loop if any sensor exceeds the threshold
 
-                    # Check if the difference in SensorX1 exceeds 50
-                    if not threshold_exceeded and prev_sensorX1 is not None:
-                        diff_sensorX1 = abs(sensor_values_float[4] - prev_sensorX1)
-                        if diff_sensorX1 > 50:
-                            warning_message = (
-                                f"⚠️ WARNING: Force value change {diff_sensorX1} "
-                                f"exceeded 50.0!\nTimestamp: {current_time}\nChoose an option:"
-                            )
-                            threshold_exceeded = True
+                    # # Check if the difference in SensorX1 exceeds 50
+                    # if not threshold_exceeded and prev_sensorX1 is not None:
+                    #     diff_sensorX1 = abs(sensor_values_float[4] - prev_sensorX1)
+                    #     if diff_sensorX1 > 50:
+                    #         warning_message = (
+                    #             f"⚠️ WARNING: Force value change {diff_sensorX1} "
+                    #             f"exceeded 50.0!\nTimestamp: {current_time}\nChoose an option:"
+                    #         )
+                    #         threshold_exceeded = True
 
-                    # Update previous SensorX1 value
-                    prev_sensorX1 = sensor_values_float[4]
+                    # # Update previous SensorX1 value
+                    # prev_sensorX1 = sensor_values_float[4]
 
                     # Create a new DataFrame row
                     new_row = pd.DataFrame(
@@ -261,7 +261,7 @@ async def read_sensor_data():
                                 "Sensor2": sensor_values_float[1],
                                 "Sensor3": sensor_values_float[2],
                                 "Sensor4": sensor_values_float[3],
-                                "Force": diff_sensorX1,
+                                # "Force": diff_sensorX1,
                                 # "SensorX2": sensor_values_float[5],
                                 # "SensorX3": sensor_values_float[6],
                             }
@@ -296,30 +296,29 @@ async def read_sensor_data():
                         alert_value, alert_status = 5, "Green"
                         scanner_colors = (0xCDD839, 0xA2AD14)  # Green gradient
 
-                    if new_row["Force"].iloc[0] == 1.0:
-                        force_alert_count += 1
+                    # if new_row["Force"].iloc[0] == 1.0:
+                    #     force_alert_count += 1
 
-                    # Alert classification for force
-                    if force_alert_count > 10:
-                        force_alert_value, force_alert_status = 10, "Red"
-                    elif 5 <= force_alert_count <= 10:
-                        force_alert_value, force_alert_status = 5, "Yellow"
-                    else:
-                        force_alert_value, force_alert_status = 2, "Green"
+                    # # Alert classification for force
+                    # if force_alert_count > 10:
+                    #     force_alert_value, force_alert_status = 10, "Red"
+                    # elif 5 <= force_alert_count <= 10:
+                    #     force_alert_value, force_alert_status = 5, "Yellow"
+                    # else:
+                    #     force_alert_value, force_alert_status = 2, "Green"
 
                     # Health Status Calculation
 
-                    health_status_value = 100 - alert_value - force_alert_value
+                    health_status_value = 100 - alert_value  # - force_alert_value
                     if health_status_value >= 80:
                         health_status = "Green"
                         gate_colors = (0xCDD839, 0xA2AD14)
                     elif 50 <= health_status_value < 80:
                         health_status = "Yellow"
-                        gate_colors = (0xFFD066, 0xFFBB22) 
+                        gate_colors = (0xFFD066, 0xFFBB22)
                     else:
                         health_status = "Red"
                         gate_colors = (0xFF8888, 0xFF0000)
-
 
                     # Create a sensor data dictionary
                     sensor_data = {
@@ -328,23 +327,23 @@ async def read_sensor_data():
                         "sensor2": sensor_values_float[1],
                         "sensor3": sensor_values_float[2],
                         "sensor4": sensor_values_float[3],
-                        "Force": diff_sensorX1,
+                        # "Force": diff_sensorX1,
                         "average_value": avg_value,
                         "alert_count": alert_count,
                         "alert_status": alert_status,
-                        "force_alert_value": force_alert_value,
-                        "force_alert_count": force_alert_count,
-                        "force_alert_status": force_alert_status,
+                        # "force_alert_value": force_alert_value,
+                        # "force_alert_count": force_alert_count,
+                        # "force_alert_status": force_alert_status,
                         "health_status_value": health_status_value,
                         "health_status": health_status,
                         "updated_annotation_colour": scanner_colors,
-                        "updated_gate_colour":gate_colors,
+                        "updated_gate_colour": gate_colors,
                         "is_critical_alert": bool(is_critical_alert),
                     }
 
                     # Print data readings
                     print(
-                        f"[{current_time}] SensorValues: {sensor_values_float[0], sensor_values_float[1], sensor_values_float[2], sensor_values_float[3], diff_sensorX1}"
+                        f"[{current_time}] SensorValues: {sensor_values_float[0], sensor_values_float[1], sensor_values_float[2], sensor_values_float[3]}"
                     )
 
                     # Broadcast sensor data via WebSocket
