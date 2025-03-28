@@ -35,13 +35,13 @@ def get_initial_health_colors(health_value: str):
 
         if health >= 80:
             # Green gradient
-            return (0xCDD839, 0xA2AD14)
+            return (0xE0E0E0, 0xF0F0F0)
         elif health >= 60:
             # Yellow gradient
-            return (0xFFD066, 0xFFBB22)
+            return (0xE0E0E0, 0xF0F0F0)
         else:
             # Red gradient
-            return (0xFF8888, 0xFF0000)
+            return (0xE0E0E0, 0xF0F0F0)
 
     except (ValueError, TypeError):
         # Default colors if health value is invalid
@@ -417,6 +417,8 @@ class GatePoint(BaseModel):  # Changed from Gate to Point to match your data str
     color1: int
     color2: int
     cameraView: CameraView
+
+    
 
 
 class UpdateHealthRequest(BaseModel):
