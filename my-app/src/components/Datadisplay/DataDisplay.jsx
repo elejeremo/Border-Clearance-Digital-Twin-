@@ -16,7 +16,7 @@ const ChartsOverviewDemo = () => {
   const { sensorData, connected } = useWebSocket();
   const [open, setOpen] = useState(false);
  //const [connected, setConnected] = useState(false);
-  const websocketRef = useRef(null);
+
 
   // useEffect(() => { //websocket upon mount
   //   // websocketRef.current = new WebSocket("ws://localhost:8000/ws");

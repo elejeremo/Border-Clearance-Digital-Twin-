@@ -438,11 +438,11 @@ async def read_sensor_data():
                         "health_status_value": health_status_value,
                         "health_status": health_status,
                         "updated_colour": scanner_colors,
-                        "is_critical_alert": is_critical_alert,
-                        "critical_alert_details": {
-                            "threshold": 1.3,
-                            "current_value": avg_value,
-                        },
+                        "is_critical_alert": bool(is_critical_alert),
+                        # "critical_alert_details": {
+                        #     "threshold": 1.3,
+                        #     "current_value": avg_value,
+                        # },
                         #                        "sensorX2": sensor_values_float[5],
                         #                        "sensorX3": sensor_values_float[6],
                     }
