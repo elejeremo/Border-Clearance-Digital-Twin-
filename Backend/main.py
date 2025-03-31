@@ -20,7 +20,7 @@ MONGODB_URL = "mongodb://localhost:27017"
 DB_NAME = "Digitaltwin"
 GATE_COLLECTION = "gates"
 ANNOTATION_COLLECTION = "annotations"
-COM_PORT = "COM5"
+COM_PORT = "COM7"
 BAUD_RATE = 9600
 
 # Global state dictionary to be used across functions
@@ -107,7 +107,7 @@ def create_sensor_data_dict(current_time, sensor_values_float, df, alert_count):
     )
 
     threshold = calculate_alert_threshold(df)
-    is_critical_alert = avg_value > 1.1
+    is_critical_alert = any(value > 1.35 for value in sensor_values_float[:4])
 
     alert_value, alert_status, scanner_colors = classify_alerts(alert_count)
 
