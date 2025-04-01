@@ -23,12 +23,12 @@
 
 .alert_warning .MuiCardContent-root {
     display: flex;
-    flex-direction: column;  /* Changed to column to match your JSX structure */
+    flex-direction: row;  /* Changed to column to match your JSX structure */
     align-items: center;
     padding: 24px;  /* Increased from 16px to 24px */
     border-radius: 12px;  /* Increased from 10px to 12px */
     gap: 20px;
-    background-color: "#FF5349";  /* Keep your existing background color */
+    background-color: none;  /* Keep your existing background color */
     min-width: 300px;  /* Add minimum width to ensure it's substantial */
 }
 
