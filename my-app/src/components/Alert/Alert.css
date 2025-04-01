@@ -1,6 +1,6 @@
 .alert_format {
     position: fixed;
-    top: 40vh;
+    top: 45vh;
     right: 40vw;
     z-index: 1000;
     width: 100%;
@@ -10,28 +10,38 @@
 
 .alert_warning {
     width: auto;
-    max-width: 20vw;
+    max-width: 60vw;  /* Increased from 50vw to 60vw */
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    background: none; /* Remove any background */
+    background: none;
     box-shadow: none;
+    transform: scale(1.5);  /* Add this to make everything 50% larger */
+    transform-origin: center;  /* This ensures it scales from the center */
 }
 
 .alert_warning .MuiCardContent-root {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;  /* Changed to column to match your JSX structure */
     align-items: center;
-    padding: 16px;
-    border-radius: 10px;
+    padding: 24px;  /* Increased from 16px to 24px */
+    border-radius: 12px;  /* Increased from 10px to 12px */
     gap: 20px;
-    background-color: "#FF5349"; /* Ensure red background */
+    background-color: "#FF5349";  /* Keep your existing background color */
+    min-width: 300px;  /* Add minimum width to ensure it's substantial */
 }
 
 .alert_warning h2 {
-    margin: 0;
-    font-size: 10px;
+    margin: 10px 0;  /* Added top and bottom margins */
+    font-size: 24px;  /* Increased from 10px to 24px */
+    font-weight: bold;  /* Made text bolder */
     color: white;
     text-align: center;
+}
+
+/* Add this to make the close button bigger */
+.alert_warning .MuiButton-root {
+    font-size: 18px;
+    padding: 6px 12px !important;
 }

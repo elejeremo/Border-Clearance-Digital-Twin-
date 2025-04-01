@@ -63,16 +63,16 @@ const Cards = () => {
     };
 
     // Effect to update card data when WebSocket data changes
-    useEffect(() => {
-        if (sensorData && sensorData.length > 0) {
-            const processedColors = sensorData.map(item => 
-                item.updated_gate_colour
-            ).filter(color => color !== undefined);
+    // useEffect(() => {
+    //     if (sensorData && sensorData.length > 0) {
+    //         const processedColors = sensorData.map(item => 
+    //             item.updated_gate_colour
+    //         ).filter(color => color !== undefined);
 
-            const CountData = countGateColors(processedColors);
-            setCountData(CountData);
-        }
-    }, [sensorData]);
+    //         const CountData = countGateColors(processedColors);
+    //         setCountData(CountData);
+    //     }
+    // }, [sensorData]);
 
     // Initial data fetch
     const fetchInitialCardData = async () => {

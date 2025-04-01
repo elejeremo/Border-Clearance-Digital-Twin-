@@ -64,7 +64,11 @@
             activeGatePoint={activeGatePoint}
           />
         </Canvas>
-
+        
+          {/* Explicit alert rendering: Once opened, it stays open until manually closed */}
+          {(wasCriticalAlert && isAlertOpen) && (
+              <AlertWidget onClick={toggleAlert} />
+            )}
         
         <div className="reset-buttons">
           <Tooltip title="ResetView">
@@ -94,10 +98,7 @@
             </Button>
           </Tooltip>
           
-            {/* Explicit alert rendering: Once opened, it stays open until manually closed */}
-            {(wasCriticalAlert && isAlertOpen) && (
-              <AlertWidget onClick={toggleAlert} />
-            )}
+        
 
   
         </div>

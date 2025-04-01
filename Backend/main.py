@@ -20,7 +20,7 @@ MONGODB_URL = "mongodb://localhost:27017"
 DB_NAME = "Digitaltwin"
 GATE_COLLECTION = "gates"
 ANNOTATION_COLLECTION = "annotations"
-COM_PORT = "COM7"
+COM_PORT = "COM5"  # Changed from COM7 to COM5 as you indicated
 BAUD_RATE = 9600
 
 # Global state dictionary to be used across functions
@@ -37,8 +37,8 @@ global_state = {
     "exit_script": False,
 }
 
+# Functions remain the same
 
-# Rest of the functions remain the same as in the previous refactoring
 def get_initial_health_colors(health_value: str):
     try:
         health = float(health_value.rstrip("%"))
@@ -235,43 +235,9 @@ async def read_sensor_data(globals_dict, ser3, manager):
     except Exception as e:
         print(f"Error in sensor reading: {e}")
     finally:
-        if ser3.is_open:
+        if ser3 and ser3.is_open:
             ser3.close()
         print("Serial connection closed.")
-
-
-# Startup event to begin sensor data reading
-@app.on_event("startup")
-async def startup_event():
-    # Setup signal handling and serial connection
-    ser3 = serial.Serial(COM_PORT, BAUD_RATE, timeout=1)
-    print(f"Connected to {COM_PORT} for sensor data")
-
-    # Signal handler setup
-    def signal_handler(sig, frame):
-        global_state["paused"] = not global_state["paused"]
-        status = "PAUSED" if global_state["paused"] else "RESUMED"
-        print(f"▶ Data collection {status}. Press Ctrl+C to toggle.")
-
-    def exit_handler():
-        global_state["exit_script"] = True
-        print("\n🚪 Exit command received. Terminating data collection...")
-
-    signal.signal(signal.SIGINT, signal_handler)
-    keyboard.add_hotkey("ctrl+e", exit_handler)
-
-    # Create task for reading sensor data
-    asyncio.create_task(read_sensor_data(global_state, ser3, manager))
-
-
-# Shutdown event
-@app.on_event("shutdown")
-async def shutdown_event():
-    global exit_script
-    exit_script = True
-    if "conn" in globals():
-        conn.close()
-    print("Database connection closed.")
 
 
 # Pydantic models
@@ -290,15 +256,13 @@ class Rendering(BaseModel):
     cameraView: CameraView
 
 
-class AnnotationPoint(
-    BaseModel
-):  # Changed from Gate to Point to match your data structure
-    Rendering: Rendering  # Capital R to match your data
+class AnnotationPoint(BaseModel):
+    Rendering: Rendering
     title: str
     gateId: str
     content: Dict[str, Any]
 
-    def __init__(self, **data):  # proccess the colour of the points
+    def __init__(self, **data):
         if "content" in data and "Health" in data["content"]:
             color1, color2 = get_initial_health_colors(data["content"]["Health"])
             if "Rendering" not in data:
@@ -308,7 +272,7 @@ class AnnotationPoint(
         super().__init__(**data)
 
 
-class GatePoint(BaseModel):  # Changed from Gate to Point to match your data structure
+class GatePoint(BaseModel):
     gatePosition: List[float]
     gateTitle: str
     color1: int
@@ -317,7 +281,7 @@ class GatePoint(BaseModel):  # Changed from Gate to Point to match your data str
 
 
 class UpdateHealthRequest(BaseModel):
-    health: str  # Expecting the health in the format "50%", "80%", etc.
+    health: str
 
 
 class CardPoint(BaseModel):
@@ -331,6 +295,67 @@ test_data = [
     {"title": "Number of Yellow/month", "content": 3, "colour": "#FFB54C"},
     {"title": "Number of Green/month", "content": 6, "colour": "#8CD47E"},
 ]
+
+
+# Combined startup event handler
+@app.on_event("startup")
+async def startup_event():
+    # 1. MongoDB Connection
+    try:
+        print("Attempting to connect to MongoDB...")
+        app.mongodb_client = AsyncIOMotorClient(MONGODB_URL)
+        app.mongodb = app.mongodb_client[DB_NAME]
+
+        # Test the connection
+        await app.mongodb.command("ping")
+        print("Successfully connected to MongoDB!")
+
+        # Check collection count
+        count = await app.mongodb[GATE_COLLECTION].count_documents({})
+        print(f"Current number of documents in {GATE_COLLECTION}: {count}")
+
+        if count == 0 and 'gate_points' in globals():
+            print("Collection empty, initializing with default data...")
+            await app.mongodb[GATE_COLLECTION].insert_many(gate_points)
+            print("Default data inserted successfully!")
+    except Exception as e:
+        print(f"Failed to connect to MongoDB: {str(e)}")
+    
+    # 2. Serial Port Connection and Signal Handling
+    try:
+        # Setup serial connection
+        ser3 = serial.Serial(COM_PORT, BAUD_RATE, timeout=1)
+        print(f"Connected to {COM_PORT} for sensor data")
+
+        # Signal handler setup
+        def signal_handler(sig, frame):
+            global_state["paused"] = not global_state["paused"]
+            status = "PAUSED" if global_state["paused"] else "RESUMED"
+            print(f"▶ Data collection {status}. Press Ctrl+C to toggle.")
+
+        def exit_handler():
+            global_state["exit_script"] = True
+            print("\n🚪 Exit command received. Terminating data collection...")
+
+        signal.signal(signal.SIGINT, signal_handler)
+        keyboard.add_hotkey("ctrl+e", exit_handler)
+
+        # Create task for reading sensor data
+        asyncio.create_task(read_sensor_data(global_state, ser3, manager))
+    except Exception as e:
+        print(f"Error setting up serial port: {e}")
+        print("Starting application without serial port functionality")
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    # Close MongoDB connection
+    if hasattr(app, 'mongodb_client'):
+        app.mongodb_client.close()
+        print("Database connection closed.")
+    
+    # Mark exit for sensor data thread
+    global_state["exit_script"] = True
 
 
 @app.get("/api/annotationdata")
@@ -353,39 +378,10 @@ async def get_annotation_data():
         return {"error": str(e)}
 
 
-@app.on_event("startup")
-async def startup_db_client():
-    try:
-        print("Attempting to connect to MongoDB...")
-        app.mongodb_client = AsyncIOMotorClient(MONGODB_URL)
-        app.mongodb = app.mongodb_client[DB_NAME]
-
-        # Test the connection
-        await app.mongodb.command("ping")
-        print("Successfully connected to MongoDB!")
-
-        # Check collection count
-        count = await app.mongodb[GATE_COLLECTION].count_documents({})
-        print(f"Current number of documents in {GATE_COLLECTION}: {count}")
-
-        if count == 0:
-            print("Collection empty, initializing with default data...")
-            await app.mongodb[GATE_COLLECTION].insert_many(gate_points)
-            print("Default data inserted successfully!")
-    except Exception as e:
-        print(f"Failed to connect to MongoDB: {str(e)}")
-
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    app.mongodb_client.close()
-
-
 @app.get("/api/gatedata")
 async def get_all_data():
     try:
         # Fetch data from MongoDB
-
         print("Attempting to fetch gate data from MongoDB...")
         gate_points_data = await app.mongodb[GATE_COLLECTION].find().to_list(1000)
         print(f"Retrieved {len(gate_points_data)} documents from MongoDB")
@@ -411,10 +407,14 @@ async def get_count_data():
 
 @app.put("/api/update_annotation/{point_title}")
 async def update_annotation(
-    point_title: str,  # Unique gate ID
-    update_request: UpdateHealthRequest,  # Request body with updated health data
+    point_title: str,
+    update_request: UpdateHealthRequest,
 ):
     try:
+        # Check if annotation_points exists and is properly defined
+        if 'annotation_points' not in globals():
+            raise HTTPException(status_code=500, detail="annotation_points not defined")
+            
         # Find the point in annotation_points by gate_id
         point_to_update = None
         for point in annotation_points:
