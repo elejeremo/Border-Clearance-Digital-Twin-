@@ -115,19 +115,7 @@ const ChartsOverviewDemo = () => {
         
 
 
-      <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 3 }}>
-        <Gauge width={100} height={100} value={60} color="#430099" />
-        <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />
-        <div className="sensor-container">
-          <h1>Live Sensor Data</h1>
-            <div className="connection-status">
-              <span className={`status-indicator ${connected ? "connected" : "disconnected"}`}></span>
-              <span>{connected ? "Connected" : "Disconnected"}</span>
-            </div>
-          
-    </div>
-    
-      </Stack>
+      
 
       
     </div>
