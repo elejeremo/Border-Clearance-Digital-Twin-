@@ -5,7 +5,7 @@ import api from "../../api.js"
 import { useWebSocket } from "../WebSocketContext/Websocket";
 
 const Cards = () => {
-    const [CountData, setCountData] = useState([]);
+    const [countData, setCountData] = useState([]);
     const [error, setError] = useState(null);
    
     // Import all WebSocket data sources
@@ -15,42 +15,43 @@ const Cards = () => {
     } = useWebSocket();
 
     // Target colors as numbers
-    const targetColors = [16711680, 16756258, 10651156];
+    const targetColors = [16711680, 16759586, 10661140];
    
     // Color mapping for display
     const colorMap = {
         16711680: { title: 'Number of Red Gates', colour: '#FF6961' },
-        16756258: { title: 'Number of Yellow Gates', colour: '#FFB54C' },
-        10651156: { title: 'Number of Green Gates', colour: '#8CD47E' },
-    };
-
-    // Function to count gate colors from multiple data sources
-    const countGateColors = (dataSources) => {
+        16759586: { title: 'Number of Yellow Gates', colour: '#FFB54C' },
+        10661140: { title: 'Number of Green Gates', colour: '#8CD47E' },
+    }
+    
+    // Function to count gate colors from a single data source
+    const countGateColors = (dataSource) => {
         // Initialize counts with zero for all target colors
         const counts = targetColors.reduce((acc, color) => {
             acc[color] = 0;
             return acc;
         }, {});
 
-        // Function to safely process each data source
-        const processDataSource = (data) => {
-            // If data is a single color value, convert to array
-            const processData = Array.isArray(data) ? data : [data];
+        // Skip if data is undefined or null
+        if (!dataSource) return targetColors.map(color => ({
+            title: colorMap[color].title,
+            content: 0,
+            colour: colorMap[color].colour,
+        }));
+        
+        // Check if gate object exists and has updated_gate_colour property
+        if (dataSource && dataSource.updated_gate_colour) {
+            // For tuple colors (color1, color2), use the second value
+            const gateColor = Array.isArray(dataSource.updated_gate_colour) 
+                ? dataSource.updated_gate_colour[1] 
+                : dataSource.updated_gate_colour;
             
-            processData.forEach(gate => {
-                // Handle different data structures
-                const gateColor = gate?.updated_gate_colour ?? gate;
-                
-                console.log("Gate color processing:", gateColor);
-                
-                if (targetColors.includes(gateColor)) {
-                    counts[gateColor]++;
-                }
-            });
-        };
-
-        // Process all provided data sources
-        dataSources.forEach(processDataSource);
+            console.log("Processing gate color:", gateColor);
+            
+            if (targetColors.includes(gateColor)) {
+                counts[gateColor]++;
+            }
+        }
 
         // Construct result array including colors with zero count
         const result = targetColors.map(color => ({
@@ -63,31 +64,43 @@ const Cards = () => {
     };
 
     // Effect to update card data when WebSocket data changes
-    // useEffect(() => {
-    //     if (sensorData && sensorData.length > 0) {
-    //         const processedColors = sensorData.map(item => 
-    //             item.updated_gate_colour
-    //         ).filter(color => color !== undefined);
-
-    //         const CountData = countGateColors(processedColors);
-    //         setCountData(CountData);
-    //     }
-    // }, [sensorData]);
+    useEffect(() => {
+        if (sensorData && Array.isArray(sensorData) && sensorData.length > 0) {
+            console.log("WebSocket data received (first item):", sensorData[0]);
+            const newCountData = countGateColors(sensorData[0]);
+            setCountData(newCountData);
+        } else if (sensorData && !Array.isArray(sensorData)) {
+            // Handle case where sensorData is a single object
+            console.log("WebSocket data received (single object):", sensorData);
+            const newCountData = countGateColors(sensorData);
+            setCountData(newCountData);
+        }
+    }, [sensorData]);
 
     // Initial data fetch
     const fetchInitialCardData = async () => {
         try {
-            const gateresponse = await api.get('/api/gatedata')
-            const transformedGateData = gateresponse.data.gate_points.map(item => ({
-                updated_gate_colour: item.color2,
-            }));
-           
-            const CountData = countGateColors(transformedGateData);
-           
-            if (CountData) {
-                setCountData(CountData);
+            const gateResponse = await api.get('/api/gatedata');
+            console.log("Initial gate data:", gateResponse.data);
+            
+            if (gateResponse.data && gateResponse.data.gate_points && gateResponse.data.gate_points.length > 0) {
+                // Just take the first item from gate_points
+                const firstGatePoint = gateResponse.data.gate_points[0];
+                
+                // Transform data to match expected format for counting
+                const transformedGateData = {
+                    updated_gate_colour: firstGatePoint.color2,
+                };
+               
+                const newCountData = countGateColors(transformedGateData);
+               
+                if (newCountData) {
+                    setCountData(newCountData);
+                } else {
+                    setError("Invalid data format received from server");
+                }
             } else {
-                setError("Invalid data format received from server");
+                setError("No gate data received from server");
             }
         } catch (error) {
             console.error("Error fetching initial card data:", error);
@@ -106,10 +119,10 @@ const Cards = () => {
 
     return (
         <div className="Cards">
-            {CountData.length === 0 ? (
+            {countData.length === 0 ? (
                 <p>Loading...</p>
             ) : (
-                CountData.map((card, index) => (
+                countData.map((card, index) => (
                     <Card
                         key={index}
                         title={card.title}
