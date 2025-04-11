@@ -11,8 +11,9 @@
             const [activeAnnotation, setActiveAnnotation] = useState(null)
             const [annotations, setAnnotations] = useState([]);
             //const { gate3sensorData, connected } = useWebSocket();
+
             const componentMap = {
-                'gate3_Scanner': React.lazy(() => import('../Datadisplay/DataDisplay')),
+                'gate3_Scanner': React.lazy(() => import('../Datadisplay/AnnotationDisplay')),
               
               };
             const componentGateMap = {
@@ -81,7 +82,7 @@
             }, []);
 
           
-            
+            // Create annotation mapping
             const getComponentForAnnotation = (annotation) => {
                 // You could have more complex logic here
                 // Like checking permissions, feature flags, etc.
@@ -91,7 +92,7 @@
                 return componentMap[compositeKey] || null;
               };
 
-
+              // Create gate mapping
             const getComponentForGate = (gate) => {
                 // You could have more complex logic here
                 // Like checking permissions, feature flags, etc.
@@ -102,7 +103,6 @@
               };
 
             return (
-
                 <WebSocketProvider>
                 <div className="MainDash">
                     <div className="topbar">
@@ -119,6 +119,7 @@
                         />
                     </div>
                     
+                    {/* dynamic rendering */}
                     {activeGate && !activeAnnotation && (
                         <div className="fixed-info-widget">
                             <div className="info-widget">

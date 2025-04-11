@@ -30,7 +30,9 @@
     const toggleAlert = () => {
       setIsAlertOpen(false);
     };
-  
+
+
+    //camera controls
     const handleSecondlevelzoom = (annotation) => {
       const { cameraView } = annotation;
       cameraControlRef.current.moveTo(cameraView.position[0], cameraView.position[1], cameraView.position[2], true);
@@ -50,6 +52,8 @@
       onGateSelect(gate)
       onAnnotationSelect(null)
     };
+
+    
 
     return (
       <div className="MainBorder">

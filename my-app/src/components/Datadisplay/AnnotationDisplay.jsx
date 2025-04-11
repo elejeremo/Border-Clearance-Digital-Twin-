@@ -5,10 +5,8 @@ import Stack from "@mui/material/Stack";
 import Card from '@mui/material/Card';
 import { CardContent } from "@mui/material";
 import Typography from '@mui/material/Typography';
-import "./DataDisplay.css"
+import "./AnnotationDisplay.css"
 import { useWebSocket } from "../WebSocketContext/Websocket";
-import AlertWidget from "../Alert/Alert";
-import Button from '@mui/material/Button';
 
 
 const ChartsOverviewDemo = () => {
@@ -115,20 +113,7 @@ const ChartsOverviewDemo = () => {
         
 
 
-      <Stack direction={{ xs: "column", md: "row" }} spacing={{ xs: 1, md: 3 }}>
-        <Gauge width={100} height={100} value={60} color="#430099" />
-        <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />
-        <div className="sensor-container">
-          <h1>Live Sensor Data</h1>
-            <div className="connection-status">
-              <span className={`status-indicator ${connected ? "connected" : "disconnected"}`}></span>
-              <span>{connected ? "Connected" : "Disconnected"}</span>
-            </div>
-          
-    </div>
-    
-      </Stack>
-
+     
       
     </div>
   );
