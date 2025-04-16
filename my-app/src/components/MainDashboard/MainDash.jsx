@@ -10,7 +10,10 @@
             const [activeGate, setActiveGate] = useState(null);
             const [activeAnnotation, setActiveAnnotation] = useState(null)
             const [annotations, setAnnotations] = useState([]);
-            //const { gate3sensorData, connected } = useWebSocket();
+            
+
+
+            //Consider moving this mapping logic into a database
 
             const componentMap = {
                 'gate3_Scanner': React.lazy(() => import('../Datadisplay/AnnotationDisplay')),
@@ -19,6 +22,28 @@
             const componentGateMap = {
                 'gate3': React.lazy(()=> import('../FrontGateDisplay/GateDisplay')),
               };
+            
+            // Create annotation mapping
+            const getComponentForAnnotation = (annotation) => {
+                // You could have more complex logic here
+                // Like checking permissions, feature flags, etc.
+                if (!annotation) return null;
+                
+                const compositeKey = `${annotation.gateId}_${annotation.title}`;
+                return componentMap[compositeKey] || null;
+              };
+
+              // Create gate mapping
+            const getComponentForGate = (gate) => {
+                // You could have more complex logic here
+                // Like checking permissions, feature flags, etc.
+                if (!gate) return null;
+                
+                const compositeGateKey = `${gate.gateTitle}`;
+                return componentGateMap[compositeGateKey] || null;
+              };
+
+
 
             const handleGateSelect = (gateData) => {
                 setActiveGate(gateData);
@@ -82,26 +107,7 @@
             }, []);
 
           
-            // Create annotation mapping
-            const getComponentForAnnotation = (annotation) => {
-                // You could have more complex logic here
-                // Like checking permissions, feature flags, etc.
-                if (!annotation) return null;
-                
-                const compositeKey = `${annotation.gateId}_${annotation.title}`;
-                return componentMap[compositeKey] || null;
-              };
-
-              // Create gate mapping
-            const getComponentForGate = (gate) => {
-                // You could have more complex logic here
-                // Like checking permissions, feature flags, etc.
-                if (!gate) return null;
-                
-                const compositeGateKey = `${gate.gateTitle}`;
-                return componentGateMap[compositeGateKey] || null;
-              };
-
+            
             return (
                 <WebSocketProvider>
                 <div className="MainDash">
